@@ -40,6 +40,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
+      - name: Install Graphviz
+        run: sudo apt-get update && sudo apt-get install -y graphviz
+
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
@@ -67,6 +70,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+
+      - name: Install Graphviz
+        run: sudo apt-get update && sudo apt-get install -y graphviz
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
