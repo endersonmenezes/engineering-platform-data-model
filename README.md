@@ -40,7 +40,7 @@ The **Service Catalog** (with `technologyAsset` at the center) connects all othe
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) 18+ or [Bun](https://bun.sh/)
+- [Node.js](https://nodejs.org/) **22+** (required by LikeC4 v1.48+)
 - [LikeC4 VS Code Extension](https://marketplace.visualstudio.com/items?itemName=likec4.likec4-vscode) (recommended)
 
 ### Installation
@@ -49,6 +49,9 @@ The **Service Catalog** (with `technologyAsset` at the center) connects all othe
 # Clone the repository
 git clone https://github.com/endersonmenezes/engineering-platform-data-model.git
 cd engineering-platform-data-model
+
+# If using nvm/fnm, switch to correct Node version
+nvm use  # or: fnm use
 
 # Install dependencies
 npm install
