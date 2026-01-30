@@ -26,7 +26,7 @@
   "devDependencies": {
     "@likec4/core": "^1.48.0",
     "likec4": "^1.48.0",
-    "markdownlint-cli2": "^0.14.0",
+    "markdownlint-cli2": "^0.20.0",
     "vitest": "^2.1.0"
   },
   "engines": {
