@@ -27,7 +27,7 @@
     "@likec4/core": "^1.48.0",
     "likec4": "^1.48.0",
     "markdownlint-cli2": "^0.14.0",
-    "vitest": "^2.1.0"
+    "vitest": "^4.0.18"
   },
   "engines": {
     "node": ">=22.0.0"
