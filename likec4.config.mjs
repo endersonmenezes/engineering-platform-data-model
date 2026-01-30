@@ -14,12 +14,6 @@ export default defineConfig({
     dir: 'dist/diagrams',
   },
   
-  // Build configuration for GitHub Pages
-  build: {
-    // Base path for GitHub Pages (repository name)
-    base: '/engineering-platform-data-model/',
-  },
-  
   // Development server configuration
   dev: {
     port: 5173,

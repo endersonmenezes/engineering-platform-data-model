@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "likec4 serve",
-    "build": "likec4 build -o dist",
+    "build": "likec4 build -o dist --base /engineering-platform-data-model/",
     "start": "likec4 start",
     "export": "likec4 export png -o dist/images",
     "validate": "likec4 validate --dry-run",
