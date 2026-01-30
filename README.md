@@ -1,8 +1,8 @@
 # Engineering Platform Data Model
 
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
-[![Deploy to GitHub Pages](https://img.shields.io/github/actions/workflow/status/YOUR_ORG/engineering-platform-data-model/deploy-pages.yml?label=docs&logo=github)](https://YOUR_ORG.github.io/engineering-platform-data-model/)
-[![Validate Model](https://img.shields.io/github/actions/workflow/status/YOUR_ORG/engineering-platform-data-model/pr-validation.yml?label=model&logo=github)](https://github.com/YOUR_ORG/engineering-platform-data-model/actions)
+[![Deploy to GitHub Pages](https://img.shields.io/github/actions/workflow/status/endersonmenezes/engineering-platform-data-model/deploy-pages.yml?label=docs&logo=github)](https://endersonmenezes.github.io/engineering-platform-data-model/)
+[![Validate Model](https://img.shields.io/github/actions/workflow/status/endersonmenezes/engineering-platform-data-model/pr-validation.yml?label=model&logo=github)](https://github.com/endersonmenezes/engineering-platform-data-model/actions)
 [![LikeC4](https://img.shields.io/badge/LikeC4-v1.48+-blue?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSJ3aGl0ZSIgZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgMThjLTQuNDEgMC04LTMuNTktOC04czMuNTktOCA4LTggOCAzLjU5IDggOC0zLjU5IDgtOCA4eiIvPjwvc3ZnPg==)](https://likec4.dev/)
 
 > **Star Schema Data Model for Internal Developer Portals (IDP)**  
