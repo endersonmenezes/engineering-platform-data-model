@@ -1,0 +1,273 @@
+// ============================================================================
+// RELATIONS - Cross-Star and Integration Connections
+// ============================================================================
+// Best Practices Applied:
+// - Kinded relationships: -[kind]-> syntax
+// - navigateTo for dynamic views
+// - Tags: #sync #ownership #dataFlow #governance
+// Ref: https://likec4.dev/dsl/relationships/
+// ============================================================================
+
+model {
+
+  // ==========================================================================
+  // ACTOR -> IDP CAPABILITIES (with navigateTo dynamic views)
+  // ==========================================================================
+  
+  developer -> idp.starTemplates 'uses self-service' {
+    #selfservice
+    navigateTo developerSelfService
+  }
+  developer -> idp.starCatalog 'searches services' {
+    navigateTo developerOnboarding
+  }
+  developer -> idp.starVCS 'manages code' {
+    navigateTo developerDailyWork
+  }
+  
+  platformEngineer -> idp.starTemplates 'creates templates' {
+    navigateTo platformEngineerTemplates
+  }
+  platformEngineer -> idp.integrationLayer 'configures integrations' {
+    navigateTo platformEngineerIntegrations
+  }
+  platformEngineer -> idp.starResource 'provisions infra' {
+    navigateTo platformEngineerMultiCloud
+  }
+  
+  techLead -> idp.starMetrics 'monitors DORA' {
+    navigateTo techLeadMetrics
+  }
+  techLead -> idp.starQuality 'tracks quality' {
+    navigateTo techLeadScorecard
+  }
+  techLead -> idp.starOrganization 'manages team'
+  
+  securityEngineer -> idp.starSecurity 'audits security' {
+    navigateTo securityEngineerPosture
+  }
+  securityEngineer -> idp.starGRC 'manages compliance' {
+    navigateTo securityEngineerIncident
+  }
+  techLead -> idp.starGRC 'defines ownership' {
+    #ownership
+  }
+  platformEngineer -> idp.starGRC 'implements policies' {
+    #governance
+  }
+  
+  // ==========================================================================
+  // INTEGRATION LAYER -> EXTERNAL SYSTEMS
+  // ==========================================================================
+  
+  idp.integrationLayer.intGitHub -[syncs]-> github 'syncs with' {
+    #sync
+    technology 'REST API, GraphQL'
+  }
+  idp.integrationLayer.intCloud.intOCI -[syncs]-> oci 'syncs with' {
+    #sync
+    technology 'OCI SDK'
+  }
+  idp.integrationLayer.intCloud.intAzure -[syncs]-> azure 'syncs with' {
+    #sync
+    technology 'Azure SDK'
+  }
+  idp.integrationLayer.intIdentity -[syncs]-> entraId 'syncs with' {
+    #sync
+    technology 'SAML, OIDC'
+  }
+  idp.integrationLayer.intQuality -[syncs]-> sonarqube 'syncs with' {
+    #sync
+    technology 'SonarQube API'
+  }
+  idp.integrationLayer.intFeatureFlags -[syncs]-> unleash 'syncs with' {
+    #sync
+    technology 'Unleash API'
+  }
+  idp.integrationLayer.intMigration -[syncs]-> liquibase 'syncs with' {
+    #sync
+    technology 'Liquibase CLI'
+  }
+  idp.integrationLayer.intMetrics -[syncs]-> linearb 'syncs with' {
+    #sync
+    technology 'REST API'
+  }
+  idp.integrationLayer.intRegistry -[syncs]-> github 'uses Packages' {
+    #sync
+    technology 'Docker Registry API'
+  }
+  idp.integrationLayer.intSecurity -[syncs]-> github 'uses GHAS' {
+    #sync
+    technology 'GitHub GHAS API'
+  }
+  idp.integrationLayer.intSecrets -[syncs]-> azure 'uses Key Vault' {
+    #sync
+    technology 'Key Vault API'
+  }
+  idp.integrationLayer.intSecrets -[syncs]-> oci 'uses OCI Vault' {
+    #sync
+    technology 'OCI Vault API'
+  }
+  
+  // ==========================================================================
+  // INTEGRATIONS -> BLUEPRINTS (Data Flow: source -> destination)
+  // ==========================================================================
+  
+  // Portal Native -> Organization & Catalog
+  idp.integrationLayer.intPortal -[syncs]-> idp.starOrganization._team 'manages' {
+    #sync #dataFlow
+  }
+  idp.integrationLayer.intPortal -[syncs]-> idp.starOrganization._user 'manages' {
+    #sync #dataFlow
+  }
+  idp.integrationLayer.intPortal -[syncs]-> idp.starOrganization.group 'manages' {
+    #sync #dataFlow
+  }
+  idp.integrationLayer.intPortal -[syncs]-> idp.starCatalog.technologyAsset 'catalogs' {
+    #sync #dataFlow
+  }
+  idp.integrationLayer.intPortal -[syncs]-> idp.starCatalog.domain 'catalogs' {
+    #sync #dataFlow
+  }
+  idp.integrationLayer.intPortal -[syncs]-> idp.starCatalog.system 'catalogs' {
+    #sync #dataFlow
+  }
+  idp.integrationLayer.intPortal -[syncs]-> idp.starCatalog.api 'catalogs' {
+    #sync #dataFlow
+  }
+  idp.integrationLayer.intPortal -[syncs]-> idp.starTemplates.template 'provides' {
+    #sync #dataFlow
+  }
+  idp.integrationLayer.intPortal -[syncs]-> idp.starTemplates.scaffoldedEntity 'tracks' {
+    #sync #dataFlow
+  }
+  
+  // Portal Native -> GRC blueprints
+  idp.integrationLayer.intPortal -[syncs]-> idp.starGRC.tier 'manages tiers' {
+    #sync #dataFlow #governance
+  }
+  idp.integrationLayer.intPortal -[syncs]-> idp.starGRC.dataClassification 'manages classifications' {
+    #sync #dataFlow #governance
+  }
+  idp.integrationLayer.intPortal -[syncs]-> idp.starGRC.lifecycleState 'manages lifecycle' {
+    #sync #dataFlow #governance
+  }
+  idp.integrationLayer.intPortal -[syncs]-> idp.starGRC.complianceRequirement 'manages requirements' {
+    #sync #dataFlow #governance
+  }
+  idp.integrationLayer.intPortal -[syncs]-> idp.starGRC.complianceEvidence 'tracks evidence' {
+    #sync #dataFlow #governance
+  }
+  idp.integrationLayer.intPortal -[syncs]-> idp.starGRC.policy 'enforces policies' {
+    #sync #dataFlow #governance
+  }
+  idp.integrationLayer.intPortal -[syncs]-> idp.starGRC.policyException 'tracks exceptions' {
+    #sync #dataFlow #governance
+  }
+  idp.integrationLayer.intPortal -[syncs]-> idp.starGRC.auditRecord 'logs audits' {
+    #sync #dataFlow #governance
+  }
+  
+  // GitHub Integration -> VCS blueprints
+  idp.integrationLayer.intGitHub -[syncs]-> idp.starVCS.repository 'syncs repos' {
+    #sync #dataFlow
+  }
+  idp.integrationLayer.intGitHub -[syncs]-> idp.starVCS.pullRequest 'syncs PRs' {
+    #sync #dataFlow
+  }
+  idp.integrationLayer.intGitHub -[syncs]-> idp.starVCS.branch 'syncs branches' {
+    #sync #dataFlow
+  }
+  idp.integrationLayer.intGitHub -[syncs]-> idp.starOrganization.githubUser 'syncs users' {
+    #sync #dataFlow
+  }
+  idp.integrationLayer.intGitHub -[syncs]-> idp.starOrganization.githubOrganization 'syncs org' {
+    #sync #dataFlow
+  }
+  
+  // GitHub Integration -> CI/CD blueprints (via GitHub Actions)
+  idp.integrationLayer.intGitHub -[syncs]-> idp.starCICD.ciPipeline 'syncs pipelines' {
+    #sync #dataFlow
+  }
+  idp.integrationLayer.intGitHub -[syncs]-> idp.starCICD.pipelineRun 'syncs runs' {
+    #sync #dataFlow
+  }
+  idp.integrationLayer.intGitHub -[syncs]-> idp.starCICD.deployment 'syncs deployments' {
+    #sync #dataFlow
+  }
+  idp.integrationLayer.intGitHub -[syncs]-> idp.starCICD.environment 'syncs environments' {
+    #sync #dataFlow
+  }
+  
+  // Artifact Registry -> Artifacts blueprints
+  idp.integrationLayer.intRegistry -[syncs]-> idp.starArtifacts.artifact 'syncs packages' {
+    #sync #dataFlow
+  }
+  idp.integrationLayer.intRegistry -[syncs]-> idp.starArtifacts.containerImage 'syncs images' {
+    #sync #dataFlow
+  }
+  
+  // Security Scanner -> Security blueprints
+  idp.integrationLayer.intSecurity -[syncs]-> idp.starSecurity.securityScorecard 'feeds scorecards' {
+    #sync #dataFlow #security
+  }
+  idp.integrationLayer.intSecurity -[syncs]-> idp.starSecurity.securityAlert 'feeds alerts' {
+    #sync #dataFlow #security
+  }
+  
+  // Secrets Management -> Security blueprints
+  idp.integrationLayer.intSecrets -[syncs]-> idp.starSecurity.secretVault 'manages vaults' {
+    #sync #dataFlow #security
+  }
+  
+  // Identity Provider -> Security blueprints
+  idp.integrationLayer.intIdentity -[syncs]-> idp.starSecurity.identity 'provides identities' {
+    #sync #dataFlow #security
+  }
+  idp.integrationLayer.intIdentity -[authenticates]-> idp.starOrganization._user 'authenticates via SSO' {
+    #sync #dataFlow
+  }
+  
+  // Cloud Providers -> Resource blueprints
+  idp.integrationLayer.intCloud.intOCI -[syncs]-> idp.starResource.ociResource 'syncs OCI resources' {
+    #sync #dataFlow
+  }
+  idp.integrationLayer.intCloud.intAzure -[syncs]-> idp.starResource.azureResource 'syncs Azure resources' {
+    #sync #dataFlow
+  }
+  
+  // Quality Analysis -> Quality blueprints
+  idp.integrationLayer.intQuality -[syncs]-> idp.starQuality.codeQuality 'analyzes code' {
+    #sync #dataFlow
+  }
+  idp.integrationLayer.intQuality -[syncs]-> idp.starQuality.testCoverage 'measures coverage' {
+    #sync #dataFlow
+  }
+  
+  // Feature Flags -> Feature blueprints
+  idp.integrationLayer.intFeatureFlags -[syncs]-> idp.starFeatures.featureFlag 'manages flags' {
+    #sync #dataFlow
+  }
+  idp.integrationLayer.intFeatureFlags -[syncs]-> idp.starFeatures.flagStrategy 'configures strategies' {
+    #sync #dataFlow
+  }
+  
+  // DB Migration -> Database blueprints
+  idp.integrationLayer.intMigration -[syncs]-> idp.starDatabase.databaseSchema 'tracks schemas' {
+    #sync #dataFlow
+  }
+  idp.integrationLayer.intMigration -[syncs]-> idp.starDatabase.migration 'executes migrations' {
+    #sync #dataFlow
+  }
+  
+  // GitHub Integration -> Copilot Metrics (GitHub Copilot API)
+  idp.integrationLayer.intGitHub -[syncs]-> idp.starMetrics.copilotMetrics 'collects Copilot usage' {
+    #sync #dataFlow #metrics
+  }
+  
+  // Metrics Provider aggregates data from multiple sources
+  idp.integrationLayer.intMetrics -[syncs]-> idp.starMetrics.copilotMetrics 'aggregates AI metrics' {
+    #sync #dataFlow #metrics
+  }
+
+}

@@ -1,0 +1,256 @@
+// ============================================================================
+// BASE MODEL - All root-level elements
+// ============================================================================
+// This file defines all main model elements.
+// Files in blueprints/ use "extend" to add children.
+// ============================================================================
+
+model {
+  
+  // =========================================================================
+  // PERSONAS - Platform Engineering Actors
+  // =========================================================================
+  
+  developer = actor 'Developer' {
+    description 'Consumes platform services via self-service'
+  }
+  
+  platformEngineer = actor 'Platform Engineer' {
+    description 'Maintains blueprints, templates and automations'
+  }
+  
+  techLead = actor 'Tech Lead' {
+    description 'Tracks DORA metrics and scorecards'
+  }
+  
+  securityEngineer = actor 'Security Engineer' {
+    description 'Monitors security posture and compliance'
+  }
+
+  // =========================================================================
+  // EXTERNAL SYSTEMS
+  // =========================================================================
+  
+  github = externalSystem 'GitHub' {
+    description 'VCS, CI/CD, Packages, GHAS'
+    icon tech:github
+    link https://github.com 'GitHub'
+  }
+  
+  oci = externalSystem 'Oracle Cloud' {
+    description 'Cloud provider for Oracle workloads'
+    icon tech:oracle
+    style {
+      color red
+    }
+  }
+  
+  azure = externalSystem 'Microsoft Azure' {
+    description 'Cloud provider for .NET workloads'
+    icon tech:azure
+    style {
+      color blue
+    }
+  }
+  
+  entraId = externalSystem 'Entra ID' {
+    description 'Corporate identity provider (SSO)'
+    icon azure:entra-id-protection
+  }
+  
+  sonarqube = externalSystem 'SonarQube' {
+    description 'Static code analysis'
+    icon tech:sonarqube
+  }
+  
+  unleash = externalSystem 'Unleash' {
+    description 'Feature flags and progressive delivery'
+    icon bootstrap:toggle-on
+  }
+  
+  liquibase = externalSystem 'Liquibase' {
+    description 'Database migrations and changelog'
+    icon tech:liquibase
+  }
+  
+  linearb = externalSystem 'LinearB' {
+    description 'Engineering metrics and DORA'
+    icon bootstrap:graph-up-arrow
+  }
+
+  // =========================================================================
+  // IDP SYSTEM - Internal Developer Portal
+  // =========================================================================
+  
+  idp = system 'Internal Developer Portal' {
+    description 'Centralized portal for organization developers'
+    
+    // ---------------------------------------------------------------------
+    // CAPABILITY STARS (Blueprint Clusters)
+    // ---------------------------------------------------------------------
+    
+    starCatalog = capability 'Service Catalog' {
+      description 'Technology asset catalog'
+      icon bootstrap:journal-code
+    }
+    
+    starOrganization = capability 'Organizational Semantic' {
+      description 'Organizational structure and ownership'
+      icon bootstrap:people-fill
+    }
+    
+    starResource = capability 'Resource Catalog' {
+      description 'Multi-cloud infrastructure OCI + Azure'
+      icon bootstrap:cloud-fill
+    }
+    
+    starVCS = capability 'Version Control' {
+      description 'Source code and GitHub collaboration'
+      icon bootstrap:git
+    }
+    
+    starCICD = capability 'CI/CD Platform' {
+      description 'Build, test and deploy automation'
+      icon bootstrap:gear-wide-connected
+    }
+    
+    starArtifacts = capability 'Artifact Management' {
+      description 'Artifact and image management'
+      icon bootstrap:box-seam-fill
+    }
+    
+    starSecurity = capability 'Security & Compliance' {
+      description 'Security posture and compliance'
+      icon bootstrap:shield-lock-fill
+    }
+    
+    starQuality = capability 'Code Quality' {
+      description 'Quality metrics and coverage'
+      icon bootstrap:check2-circle
+    }
+    
+    starFeatures = capability 'Feature Management' {
+      description 'Feature flags and progressive delivery'
+      icon bootstrap:toggles
+    }
+    
+    starDatabase = capability 'Database Management' {
+      description 'Schemas and Liquibase migrations'
+      icon bootstrap:database-fill-gear
+    }
+    
+    starMetrics = capability 'Engineering Metrics' {
+      description 'DORA and productivity metrics'
+      icon bootstrap:speedometer2
+    }
+    
+    starTemplates = capability 'Software Templates' {
+      description 'Self-service for component creation'
+      icon bootstrap:file-earmark-code-fill
+    }
+    
+    starGRC = capability 'GRC' {
+      description 'Governance, Risk & Compliance - Ownership, policies, audit'
+      icon bootstrap:clipboard-check-fill
+    }
+    
+    // ---------------------------------------------------------------------
+    // INTEGRATION LAYER (ACL - Anti-Corruption Layer)
+    // ---------------------------------------------------------------------
+    
+    integrationLayer = integration 'Integration Layer' {
+      description 'ACL layer for external providers'
+      technology 'REST, Webhooks, SDK'
+      icon bootstrap:plug-fill
+      
+      intPortal = integration 'Portal Native' {
+        description 'Portal native blueprints'
+        technology 'Port.io'
+        icon bootstrap:house-door-fill
+      }
+      
+      intGitHub = integration 'GitHub Integration' {
+        description 'Repos, PRs, Actions, Packages, GHAS'
+        technology 'REST API, GraphQL'
+        icon tech:github
+      }
+      
+      intCloud = integration 'Cloud Providers' {
+        description 'Multi-cloud: OCI + Azure'
+        technology 'Cloud SDK'
+        icon bootstrap:cloud-arrow-up-fill
+        
+        intOCI = integration 'OCI Provider' {
+          description 'Oracle Cloud Infrastructure'
+          technology 'OCI SDK'
+          icon tech:oracle
+          style {
+            color red
+          }
+        }
+        
+        intAzure = integration 'Azure Provider' {
+          description 'Microsoft Azure'
+          technology 'Azure SDK'
+          icon tech:azure
+          style {
+            color blue
+          }
+        }
+      }
+      
+      intRegistry = integration 'Artifact Registry' {
+        description 'Container images and packages'
+        technology 'Docker Registry API'
+        icon tech:docker
+      }
+      
+      intIdentity = integration 'Identity Provider' {
+        description 'SSO via Entra ID'
+        technology 'SAML, OIDC'
+        icon azure:entra-id-protection
+      }
+      
+      intSecrets = integration 'Secrets Management' {
+        description 'OCI + Azure key vaults'
+        technology 'Key Vault API'
+        icon bootstrap:key-fill
+      }
+      
+      intSecurity = integration 'Security Scanner' {
+        description 'GHAS and vulnerability scanning'
+        technology 'GitHub GHAS API'
+        icon bootstrap:shield-exclamation
+      }
+      
+      intQuality = integration 'Quality Analysis' {
+        description 'SonarQube integration'
+        technology 'SonarQube API'
+        icon tech:sonarqube
+      }
+      
+      intFeatureFlags = integration 'Feature Flags' {
+        description 'Unleash integration'
+        technology 'Unleash API'
+        icon bootstrap:toggle-on
+      }
+      
+      intMigration = integration 'DB Migration' {
+        description 'Liquibase integration'
+        technology 'Liquibase CLI'
+        icon tech:liquibase
+      }
+      
+      intMetrics = integration 'Metrics Provider' {
+        description 'LinearB and GitHub Copilot'
+        technology 'REST API'
+        icon bootstrap:bar-chart-line-fill
+      }
+    }
+  }
+
+  // =========================================================================
+  // TOP-LEVEL RELATIONS (moved to relations.c4 for better organization)
+  // =========================================================================
+
+}

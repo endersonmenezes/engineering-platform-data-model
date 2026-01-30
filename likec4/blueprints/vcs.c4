@@ -1,0 +1,53 @@
+// ============================================================================
+// BLUEPRINTS: Version Control (GitHub)
+// ============================================================================
+// Best Practices: Nested relations with 'this', kinded syntax
+// Ref: https://likec4.dev/dsl/relationships/
+// ============================================================================
+
+model {
+  extend idp.starVCS {
+    
+    repository = blueprint 'repository' {
+      #github
+      description 'GitHub code repository'
+      icon tech:github
+      
+      // Cross-Star Relations
+      this -[owns]-> idp.starOrganization.githubOrganization 'belongsTo' { #ownership }
+      this -[triggers]-> idp.starCICD.ciPipeline 'hasPipeline'
+      this -[produces]-> idp.starArtifacts.artifact 'produces'
+      this -[dependsOn]-> idp.starSecurity.securityScorecard 'hasScorecard' { #security }
+      this -[dependsOn]-> idp.starSecurity.securityAlert 'hasAlert' { #security }
+      this -[dependsOn]-> idp.starQuality.codeQuality 'hasQuality'
+      this -[dependsOn]-> idp.starMetrics.engineeringMetrics 'hasMetrics' { #metrics }
+      this -[dependsOn]-> idp.starTemplates.template 'createdFrom' { #selfservice }
+      this -[dataSource]-> idp.integrationLayer.intGitHub { #dataFlow #sync }
+    }
+    
+    pullRequest = blueprint 'pullRequest' {
+      #github
+      description 'Pull Request for review'
+      icon bootstrap:arrow-left-right
+      
+      // Cross-Star Relations
+      this -[dataSource]-> idp.integrationLayer.intGitHub { #dataFlow #sync }
+    }
+    
+    branch = blueprint 'branch' {
+      #github
+      description 'Repository branch'
+      icon bootstrap:diagram-2-fill
+      
+      // Cross-Star Relations
+      this -[dataSource]-> idp.integrationLayer.intGitHub { #dataFlow #sync }
+    }
+    
+    // Internal Relations (using kinded syntax)
+    repository -[includes]-> branch 'hasBranch'
+    repository -[includes]-> pullRequest 'hasPullRequest'
+    branch -[produces]-> pullRequest 'createsPR'
+    pullRequest -[dependsOn]-> branch 'targets'
+    
+  }
+}

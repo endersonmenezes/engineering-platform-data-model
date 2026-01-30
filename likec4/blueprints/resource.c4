@@ -1,0 +1,39 @@
+// ============================================================================
+// BLUEPRINTS: Resource Catalog (Multi-Cloud)
+// ============================================================================
+
+model {
+  extend idp.starResource {
+    
+    resource = blueprint 'resource' {
+      description 'Infrastructure resource (abstract)'
+      icon bootstrap:cloud-fill
+      
+      // Cross-Star Relations
+      this -[owns]-> idp.starOrganization._team 'ownedBy' { #ownership }
+    }
+    
+    ociResource = blueprint 'ociResource' {
+      #oci
+      description 'Oracle Cloud resource: compute, storage, DB'
+      icon tech:oracle
+      
+      this -[dataSource]-> idp.integrationLayer.intCloud.intOCI { #dataFlow }
+    }
+    
+    azureResource = blueprint 'azureResource' {
+      #azure
+      description 'Azure resource: VMs, functions, SQL'
+      icon tech:azure
+      
+      this -[dataSource]-> idp.integrationLayer.intCloud.intAzure { #dataFlow }
+    }
+    
+    // Inheritance / Specialization (kinded)
+    resource -[includes]-> ociResource 'implementedBy'
+    resource -[includes]-> azureResource 'implementedBy'
+    ociResource -[dependsOn]-> resource 'implements'
+    azureResource -[dependsOn]-> resource 'implements'
+    
+  }
+}

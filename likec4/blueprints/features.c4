@@ -1,0 +1,26 @@
+// ============================================================================
+// BLUEPRINTS: Feature Management
+// ============================================================================
+
+model {
+  extend idp.starFeatures {
+    
+    featureFlag = blueprint 'featureFlag' {
+      description 'Feature flag for progressive delivery'
+      icon bootstrap:toggle-on
+      
+      this -[dataSource]-> idp.integrationLayer.intFeatureFlags { #dataFlow }
+    }
+    
+    flagStrategy = blueprint 'flagStrategy' {
+      description 'Activation strategy (rollout, A/B)'
+      icon bootstrap:sliders
+      
+      this -[dataSource]-> idp.integrationLayer.intFeatureFlags { #dataFlow }
+    }
+    
+    // Internal Relations (kinded)
+    featureFlag -[includes]-> flagStrategy 'hasStrategy'
+    
+  }
+}

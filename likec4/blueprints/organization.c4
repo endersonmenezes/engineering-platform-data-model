@@ -1,0 +1,66 @@
+// ============================================================================
+// BLUEPRINTS: Organizational Semantic
+// ============================================================================
+// Best Practices: Nested relations with 'this', kinded syntax
+// Ref: https://likec4.dev/dsl/relationships/
+// ============================================================================
+
+model {
+  extend idp.starOrganization {
+    
+    _team = blueprint '_team' {
+      description 'Portal team (squad, chapter)'
+      icon bootstrap:people-fill
+      
+      // Cross-Star Relations
+      this -[dependsOn]-> idp.starMetrics.engineeringMetrics 'hasMetrics' { #metrics }
+      this -[dependsOn]-> idp.starMetrics.copilotMetrics 'hasCopilot' { #metrics }
+      this -[dataSource]-> idp.integrationLayer.intPortal { #dataFlow }
+    }
+    
+    _user = blueprint '_user' {
+      description 'Portal user'
+      icon bootstrap:person-fill
+      
+      // Cross-Star Relations
+      this -[authenticates]-> idp.starSecurity.identity 'authenticatesVia' { #security }
+      this -[dataSource]-> idp.integrationLayer.intPortal { #dataFlow }
+    }
+    
+    group = blueprint 'group' {
+      description 'Organizational grouping (tribe, area)'
+      icon bootstrap:building-fill
+      
+      // Cross-Star Relations
+      this -[dataSource]-> idp.integrationLayer.intPortal { #dataFlow }
+    }
+    
+    githubUser = blueprint 'githubUser' {
+      #github
+      description 'GitHub identity of the user'
+      icon tech:github
+      
+      // Cross-Star Relations
+      this -[dataSource]-> idp.integrationLayer.intGitHub { #dataFlow #sync }
+    }
+    
+    githubOrganization = blueprint 'githubOrganization' {
+      #github
+      description 'GitHub Organization'
+      icon tech:github
+      
+      // Cross-Star Relations
+      this -[dataSource]-> idp.integrationLayer.intGitHub { #dataFlow #sync }
+    }
+    
+    // Internal Relations (using kinded syntax)
+    _user -[dependsOn]-> _team 'memberOf'
+    _team -[dependsOn]-> group 'partOf'
+    group -[includes]-> _team 'contains'
+    _user -[dependsOn]-> githubUser 'hasGitHubIdentity'
+    _team -[dependsOn]-> githubOrganization 'belongsTo'
+    group -[dependsOn]-> githubOrganization 'managedIn'
+    githubOrganization -[includes]-> githubUser 'hasMembers'
+    
+  }
+}

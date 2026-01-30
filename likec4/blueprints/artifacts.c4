@@ -1,0 +1,26 @@
+// ============================================================================
+// BLUEPRINTS: Artifact Management
+// ============================================================================
+
+model {
+  extend idp.starArtifacts {
+    
+    artifact = blueprint 'artifact' {
+      description 'Artifact: JAR, NPM package, etc.'
+      icon bootstrap:archive-fill
+      
+      this -[dataSource]-> idp.integrationLayer.intRegistry { #dataFlow }
+    }
+    
+    containerImage = blueprint 'containerImage' {
+      description 'Docker/OCI container image'
+      icon tech:docker
+      
+      this -[dataSource]-> idp.integrationLayer.intRegistry { #dataFlow }
+    }
+    
+    // Internal Relations (kinded)
+    artifact -[includes]-> containerImage 'includesImage'
+    
+  }
+}

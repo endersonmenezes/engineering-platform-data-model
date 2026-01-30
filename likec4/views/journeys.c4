@@ -1,0 +1,461 @@
+// ============================================================================
+// VIEWS: Journeys (Dynamic Views - Personas)
+// ============================================================================
+// Interactive journeys showing each persona's workflow
+// Using sequence syntax for better visualization
+// ============================================================================
+
+views 'Journeys' {
+
+  // =========================================================================
+  // DEVELOPER JOURNEY: Self-Service & Daily Work
+  // =========================================================================
+  
+  dynamic view developerOnboarding {
+    title 'Developer / Onboarding'
+    description 'How a new developer is onboarded to the platform'
+    
+    // SSO via Entra ID
+    developer 
+      -> entraId 'Authenticates via SSO' {
+        notes '
+          **Corporate SSO:**
+          Login with Entra ID credentials
+        '
+      }
+    
+    entraId 
+      -> idp.integrationLayer.intIdentity 'Identity Provider'
+      -> idp.starOrganization._user 'Creates/links user' {
+        notes '
+          **User created:**
+          - Corporate email
+          - Name and department
+        '
+      }
+    
+    // GitHub mapping via email
+    github 
+      -> idp.integrationLayer.intGitHub 'Data source'
+      -> idp.starOrganization.githubUser 'Syncs GitHub user' {
+        notes '
+          **Mapping via email:**
+          The corporate email (Entra ID) is the
+          same as GitHub - allows automatic linking
+          _user to githubUser
+        '
+      }
+    
+    idp.starOrganization._user 
+      -> idp.starOrganization.githubUser 'hasGitHubIdentity (email match)'
+    
+    // Team association and access
+    idp.starOrganization._user 
+      -> idp.starOrganization._team 'Is associated with team'
+    
+    idp.starOrganization._team 
+      -> idp.starVCS.repository 'Team has access to repos' {
+        notes '
+          **Access via GitHub Team:**
+          _team maps to GitHub Team
+          Permissions inherited automatically
+        '
+      }
+    
+    include 
+      entraId,
+      github,
+      idp.integrationLayer.intIdentity,
+      idp.integrationLayer.intGitHub
+  }
+  
+  dynamic view developerSelfService {
+    title 'Developer / Self-Service'
+    description 'Developer creating new service via template'
+    
+    developer 
+      -> idp.starTemplates.template 'Searches template in Portal' {
+        notes '
+          **Available templates:**
+          - Java Spring Boot
+          - Python FastAPI
+          - Node.js Express
+        '
+      }
+    
+    idp.starTemplates.template 
+      -> idp.starTemplates.scaffoldedEntity 'Executes scaffolding'
+      -> idp.starCatalog.technologyAsset 'Registers Technology Asset' {
+        notes '
+          **Asset created:**
+          Name, description, type
+          Owner automatically assigned
+        '
+      }
+    
+    // TechnologyAsset generates its resources depending on type
+    parallel {
+      idp.starCatalog.technologyAsset -> idp.starVCS.repository 'usesRepo' {
+        notes '
+          **GitHub Repository:**
+          Created from the skeleton
+          of the selected template
+        '
+      }
+      idp.starCatalog.technologyAsset -> idp.starOrganization._team 'ownedBy'
+    }
+    
+    // Repo connects to GitHub and triggers CI/CD
+    idp.starVCS.repository 
+      -> github 'Hosted on'
+      -> idp.starCICD.ciPipeline 'Workflow configured' {
+        notes '
+          **CI/CD ready:**
+          GitHub Actions already configured
+          by the template
+        '
+      }
+  }
+  
+  dynamic view developerDailyWork {
+    title 'Developer / Daily Work'
+    description 'Daily flow: code to PR to deploy'
+    
+    // Starts fetching code
+    developer 
+      -> github 'Fetch/Pull code' {
+        notes '
+          **Start of day:**
+          git fetch and git pull
+          Sync with remote
+        '
+      }
+      -> idp.starVCS.repository 'Works on repo'
+      -> idp.starVCS.branch 'Creates feature branch'
+      -> idp.starVCS.pullRequest 'Opens Pull Request'
+    
+    // PR triggers pipeline
+    idp.starVCS.pullRequest 
+      -> idp.starCICD.ciPipeline 'Triggers pipeline'
+      -> idp.starCICD.pipelineRun 'Executes build and tests'
+    
+    // Parallel analyses
+    parallel {
+      idp.starCICD.pipelineRun -> sonarqube 'Sends for analysis'
+      idp.starCICD.pipelineRun -> idp.starSecurity.securityScorecard 'GHAS scan'
+    }
+    
+    parallel {
+      sonarqube -> idp.starQuality.codeQuality 'Quality result' {
+        notes '
+          **Quality Gates:**
+          - Coverage > 80%
+          - No critical issues
+        '
+      }
+      idp.starSecurity.securityScorecard -> idp.starSecurity.securityAlert 'Alerts found' {
+        notes '
+          **GHAS Checks:**
+          - CodeQL analysis
+          - Dependency scan
+          - Secret scan
+        '
+      }
+    }
+    
+    // Merge and Deploy
+    idp.starVCS.pullRequest 
+      -> idp.starCICD.deployment 'Merge then Deploy'
+      -> idp.starCICD.environment 'Deploy to staging'
+  }
+
+  // =========================================================================
+  // PLATFORM ENGINEER JOURNEY: Building the Platform
+  // =========================================================================
+  
+  dynamic view platformEngineerTemplates {
+    title 'Platform Engineer / Templates'
+    description 'Creating and maintaining Software Templates'
+    
+    platformEngineer 
+      -> idp.starTemplates.template 'Creates new template' {
+        notes '
+          **Template includes:**
+          - Skeleton code
+          - CI/CD workflows
+          - IaC modules
+          - Documentation
+        '
+      }
+    
+    // Template defines base structure
+    idp.starTemplates.template 
+      -> github 'Skeleton hosted on'
+      -> idp.starVCS.repository 'Defines repo structure'
+    
+    parallel {
+      idp.starVCS.repository -> idp.starCICD.ciPipeline 'Includes CI/CD workflow'
+      idp.starVCS.repository -> idp.starResource.resource 'Defines IaC modules'
+    }
+    
+    idp.starTemplates.template 
+      -> idp.starOrganization._team 'Assigns ownership' {
+        notes '
+          **Governance:**
+          Team responsible for maintaining
+          and evolving the template
+        '
+      }
+  }
+  
+  dynamic view platformEngineerMultiCloud {
+    title 'Platform Engineer / Multi-Cloud'
+    description 'Provisioning resources in OCI and Azure'
+    
+    // Dev requests infra for their service
+    developer 
+      -> idp.starCatalog.technologyAsset 'Needs infrastructure' {
+        notes '
+          **Request:**
+          Service needs database
+          and storage
+        '
+      }
+    
+    idp.starCatalog.technologyAsset 
+      -> idp.starResource.resource 'Declares dependency'
+    
+    // Platform Engineer configures resources
+    platformEngineer 
+      -> idp.starResource.resource 'Provisions abstract resource' {
+        notes '
+          **Resource Types:**
+          - compute, function, storage
+          - database, queue, cache
+          - cluster, network, cdn
+        '
+      }
+    
+    // Resources are specialized by cloud
+    parallel {
+      idp.starResource.resource -> oci 'Provisions in OCI'
+      idp.starResource.resource -> azure 'Provisions in Azure'
+    }
+    
+    parallel {
+      oci -> idp.starResource.ociResource 'Creates OCI resources' {
+        notes '
+          **OCI:**
+          - Autonomous DB
+          - OKE Clusters
+          - Object Storage
+        '
+      }
+      azure -> idp.starResource.azureResource 'Creates Azure resources' {
+        notes '
+          **Azure:**
+          - Azure SQL
+          - AKS Clusters
+          - Blob Storage
+        '
+      }
+    }
+  }
+  
+  dynamic view platformEngineerIntegrations {
+    title 'Platform Engineer / Integrations'
+    description 'Configuring data sources and synchronization'
+    
+    platformEngineer 
+      -> github 'Accesses GitHub App settings' {
+        notes '
+          **GitHub App:**
+          Permission configuration
+          and webhooks
+        '
+      }
+      -> idp.integrationLayer.intGitHub 'Configures integration' {
+        notes '
+          **Permissions:**
+          - Repository contents
+          - Pull requests
+          - Actions
+          - Security events
+        '
+      }
+    
+    // Data synchronization
+    parallel {
+      idp.integrationLayer.intGitHub -> idp.starVCS.repository 'Imports repositories'
+      idp.integrationLayer.intGitHub -> idp.starOrganization.githubUser 'Syncs users'
+    }
+    
+    // Derived data
+    parallel {
+      idp.starVCS.repository -> idp.starCICD.ciPipeline 'Auto-detects pipelines'
+      idp.starVCS.repository -> idp.starSecurity.securityScorecard 'Imports GHAS data' {
+        notes '
+          **GHAS Sync:**
+          - Dependabot alerts
+          - Code scanning
+          - Secret scanning
+        '
+      }
+    }
+  }
+
+  // =========================================================================
+  // TECH LEAD JOURNEY: Visibility & Governance
+  // =========================================================================
+  
+  dynamic view techLeadScorecard {
+    title 'Tech Lead / Production Readiness'
+    description 'Evaluating team readiness'
+    
+    techLead 
+      -> idp.starOrganization._team 'Accesses team dashboard'
+      -> idp.starVCS.repository 'Lists team repos'
+    
+    parallel {
+      idp.starVCS.repository 
+        -> idp.starQuality.codeQuality 'Checks quality gates'
+        -> idp.starQuality.testCoverage 'Checks coverage'
+      
+      idp.starVCS.repository 
+        -> idp.starSecurity.securityScorecard 'Checks security'
+        -> idp.starSecurity.securityAlert 'Lists vulnerabilities'
+    }
+    
+    idp.starVCS.repository 
+      -> idp.starCICD.ciPipeline 'Pipeline status'
+      -> idp.starCICD.deployment 'Deploy frequency' {
+        notes '
+          **Scorecard:**
+          - Quality Gate: Pass
+          - Coverage: 85%
+          - Vulnerabilities: 0 critical
+          - Deploy freq: 3x/week
+        '
+      }
+  }
+  
+  dynamic view techLeadMetrics {
+    title 'Tech Lead / DORA Metrics'
+    description 'Tracking engineering metrics'
+    
+    techLead 
+      -> idp.starOrganization._team 'Selects team' {
+        notes '
+          **DORA Metrics:**
+          - Deployment Frequency
+          - Lead Time for Changes
+          - Mean Time to Recovery
+          - Change Failure Rate
+        '
+      }
+      -> idp.starVCS.repository 'Team repos'
+    
+    // Metrics come from LinearB
+    idp.starVCS.repository 
+      -> linearb 'Sends data'
+      -> idp.starMetrics.engineeringMetrics 'Calculates DORA metrics' {
+        notes '
+          **Calculated metrics:**
+          - Lead time: 2.3 days
+          - Deploy freq: 4x/week
+          - MTTR: 1.2 hours
+          - CFR: 5%
+        '
+      }
+    
+    // Copilot metrics
+    idp.starOrganization._team 
+      -> idp.starMetrics.copilotMetrics 'Copilot metrics' {
+        notes '
+          **Copilot Stats:**
+          - Active users: 85%
+          - Acceptance rate: 32%
+          - Lines suggested: 45k
+        '
+      }
+  }
+
+  // =========================================================================
+  // SECURITY ENGINEER JOURNEY: Security Posture
+  // =========================================================================
+  
+  dynamic view securityEngineerPosture {
+    title 'Security Engineer / Security Posture'
+    description 'Organization security posture overview'
+    
+    securityEngineer 
+      -> idp.starSecurity.securityScorecard 'Accesses Security Dashboard' {
+        notes '
+          **Dashboard:**
+          - Critical: 0
+          - High: 2
+          - Medium: 15
+          - Low: 42
+        '
+      }
+      -> idp.starSecurity.securityAlert 'Drills down into alerts'
+      -> idp.starVCS.repository 'Identifies affected repos'
+      -> github 'Checks on GitHub' {
+        notes '
+          **GHAS:**
+          Alert details
+          directly on GitHub
+        '
+      }
+    
+    // Secrets and identities audit
+    securityEngineer 
+      -> idp.starSecurity.secretVault 'Audits secrets'
+    
+    parallel {
+      idp.starSecurity.secretVault -> azure 'Checks Azure Key Vault'
+      idp.starSecurity.secretVault -> oci 'Checks OCI Vault'
+    }
+    
+    // Identity audit
+    securityEngineer 
+      -> idp.starSecurity.identity 'Audits identities'
+      -> entraId 'Checks on Entra ID' {
+        notes '
+          **Identity Audit:**
+          - Service principals
+          - App registrations
+          - RBAC assignments
+        '
+      }
+  }
+  
+  dynamic view securityEngineerIncident {
+    title 'Security Engineer / Incident Response'
+    description 'Responding to a critical alert'
+    
+    github 
+      -> idp.starSecurity.securityAlert 'Dependabot: Critical CVE' {
+        notes '
+          **Alert:**
+          CVE-2026-XXXXX
+          Severity: Critical
+          CVSS: 9.8
+        '
+      }
+      -> idp.starVCS.repository 'Identifies affected repo'
+      -> idp.starCatalog.technologyAsset 'Identifies service'
+      -> idp.starOrganization._team 'Identifies owner'
+      -> idp.starVCS.pullRequest 'Creates PR with fix'
+      -> idp.starCICD.ciPipeline 'Pipeline executes'
+      -> idp.starCICD.deployment 'Deploys fix' {
+        notes '
+          **Resolution:**
+          - MTTR: 45 min
+          - Hotfix deployed
+          - Stakeholders notified
+        '
+      }
+  }
+
+}

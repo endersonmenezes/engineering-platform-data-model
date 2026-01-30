@@ -1,0 +1,45 @@
+// ============================================================================
+// BLUEPRINTS: Security & Compliance
+// ============================================================================
+
+model {
+  extend idp.starSecurity {
+    
+    securityScorecard = blueprint 'securityScorecard' {
+      #security
+      description 'Consolidated security score of the asset'
+      icon bootstrap:shield-fill-check
+      
+      this -[dataSource]-> idp.integrationLayer.intSecurity { #dataFlow }
+    }
+    
+    securityAlert = blueprint 'securityAlert' {
+      #security
+      description 'Individual alert: vuln, secret, dependabot'
+      icon bootstrap:exclamation-triangle-fill
+      
+      this -[dataSource]-> idp.integrationLayer.intSecurity { #dataFlow }
+    }
+    
+    secretVault = blueprint 'secretVault' {
+      #security
+      description 'Secrets vault (Key Vault, OCI Vault)'
+      icon bootstrap:safe2-fill
+      
+      this -[dataSource]-> idp.integrationLayer.intSecrets { #dataFlow }
+    }
+    
+    identity = blueprint 'identity' {
+      #security
+      description 'Managed identity (Entra ID)'
+      icon bootstrap:person-badge-fill
+      
+      this -[dataSource]-> idp.integrationLayer.intIdentity { #dataFlow }
+    }
+    
+    // Internal Relations (kinded)
+    securityScorecard -[includes]-> securityAlert 'aggregatesAlerts'
+    secretVault -[authenticates]-> identity 'usesIdentity'
+    
+  }
+}

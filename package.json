@@ -1,0 +1,35 @@
+{
+  "name": "engineering-platform-data-model",
+  "version": "1.0.0",
+  "description": "Star Schema Data Model for Internal Developer Portals (IDP) built with LikeC4",
+  "type": "module",
+  "scripts": {
+    "dev": "likec4 serve",
+    "build": "likec4 build -o dist",
+    "start": "likec4 start",
+    "export": "likec4 export png -o dist/images",
+    "validate": "likec4 validate --dry-run",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": [
+    "c4-model",
+    "architecture",
+    "likec4",
+    "internal-developer-portal",
+    "platform-engineering",
+    "backstage",
+    "port-io"
+  ],
+  "author": "",
+  "license": "CC-BY-4.0",
+  "devDependencies": {
+    "@likec4/core": "^1.48.0",
+    "likec4": "^1.48.0",
+    "markdownlint-cli2": "^0.14.0",
+    "vitest": "^2.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

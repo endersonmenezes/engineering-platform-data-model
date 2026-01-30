@@ -1,0 +1,81 @@
+// ============================================================================
+// BLUEPRINTS: Service Catalog (MODEL CENTER)
+// ============================================================================
+// Best Practices: Nested relations with 'this', kinded syntax
+// Ref: https://likec4.dev/dsl/relationships/
+// ============================================================================
+
+model {
+  extend idp.starCatalog {
+    
+    technologyAsset = blueprint 'technologyAsset' {
+      #core
+      description 'Technology asset: service, library, tool'
+      icon bootstrap:box-fill
+
+      
+      // Cross-Star Relations (nested with 'this')
+      this -[owns]-> idp.starOrganization._team 'ownedBy' { #ownership }
+      this -[owns]-> idp.starOrganization._team 'supportedBy' { #ownership }
+      this -[dependsOn]-> idp.starVCS.repository 'usesRepo'
+      this -[dependsOn]-> idp.starResource.resource 'dependsOn'
+      this -[deploys]-> idp.starCICD.environment 'deployedTo'
+      this -[dependsOn]-> idp.starSecurity.secretVault 'usesSecrets'
+      this -[authenticates]-> idp.starSecurity.identity 'usesIdentity'
+      this -[dependsOn]-> idp.starFeatures.featureFlag 'hasFlag'
+      this -[dependsOn]-> idp.starDatabase.databaseSchema 'hasSchema'
+      this -[dependsOn]-> idp.starTemplates.template 'createdFrom'
+      
+      // GRC Governance
+      this -[governs]-> idp.starGRC.tier 'hasTier' { #governance }
+      this -[governs]-> idp.starGRC.dataClassification 'hasClassification' { #governance }
+      this -[governs]-> idp.starGRC.lifecycleState 'hasLifecycle' { #governance }
+      this -[governs]-> idp.starGRC.complianceRequirement 'requiresCompliance' { #governance }
+      
+      // Data Source
+      this -[dataSource]-> idp.integrationLayer.intPortal { #dataFlow }
+    }
+    
+    domain = blueprint 'domain' {
+      description 'Business domain'
+      icon bootstrap:diagram-3-fill
+      
+      // Cross-Star Relations
+      this -[owns]-> idp.starOrganization.group 'ownedBy' { #ownership }
+      this -[governs]-> idp.starGRC.complianceRequirement 'requiresCompliance' { #governance }
+      this -[dataSource]-> idp.integrationLayer.intPortal { #dataFlow }
+    }
+    
+    system = blueprint 'system' {
+      description 'System grouping components'
+      icon bootstrap:collection-fill
+      
+      // Cross-Star Relations
+      this -[owns]-> idp.starOrganization._team 'ownedBy' { #ownership }
+      this -[owns]-> idp.starOrganization._team 'supportedBy' { #ownership }
+      this -[governs]-> idp.starGRC.tier 'hasTier' { #governance }
+      this -[governs]-> idp.starGRC.complianceRequirement 'requiresCompliance' { #governance }
+      this -[dataSource]-> idp.integrationLayer.intPortal { #dataFlow }
+    }
+    
+    api = blueprint 'api' {
+      description 'Interface exposed by an asset'
+      icon bootstrap:arrows-expand
+      
+      // Cross-Star Relations
+      this -[owns]-> idp.starOrganization._team 'ownedBy' { #ownership }
+      this -[dataSource]-> idp.integrationLayer.intPortal { #dataFlow }
+    }
+    
+    // Internal Relations (using kinded syntax)
+    domain -[includes]-> system 'containsSystem'
+    system -[includes]-> technologyAsset 'containsAsset'
+    technologyAsset -[produces]-> api 'exposesAPI'
+    
+    // Reverse navigation
+    technologyAsset -[dependsOn]-> system 'partOfSystem'
+    system -[dependsOn]-> domain 'partOfDomain'
+    api -[dependsOn]-> technologyAsset 'exposedBy'
+    
+  }
+}

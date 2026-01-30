@@ -1,0 +1,59 @@
+// ============================================================================
+// C2 - CONTAINER
+// ============================================================================
+// Zoom inside the system to show its high-level "containers".
+// In the IDP context, the containers are:
+//   - 13 Capability Stars (capability domains)
+//   - Integration Layer (abstraction layer for providers)
+// 
+// Audience: Architects, Tech Leads, Platform Engineers
+// Question answered: "What are the major functional blocks of the IDP?"
+// 
+// IMPORTANT: This level does NOT show individual blueprints.
+// To see the internal components of each Star, use the C3 views.
+// ============================================================================
+
+views 'C2: Containers' {
+
+  // -------------------------------------------------------------------------
+  // CAPABILITIES: 13 Capability Stars + Integration Layer
+  // -------------------------------------------------------------------------
+  // Shows all IDP capabilities as high-level containers.
+  // Each Star is a functional domain containing multiple blueprints.
+  // The "of idp" binding allows visualizing relationships between Stars.
+  // -------------------------------------------------------------------------
+  view capabilities of idp {
+    title 'C2: Capability Stars'
+    description '13 capability domains and their dependencies'
+    
+    include 
+      idp.starCatalog,
+      idp.starOrganization,
+      idp.starResource,
+      idp.starVCS,
+      idp.starCICD,
+      idp.starArtifacts,
+      idp.starSecurity,
+      idp.starQuality,
+      idp.starFeatures,
+      idp.starDatabase,
+      idp.starMetrics,
+      idp.starTemplates,
+      idp.starGRC,
+      idp.integrationLayer
+    
+    style idp.starCatalog {
+      notation "Model Center"
+      color amber
+    }
+    style element.kind == capability {
+      notation "Capability Star"
+      color sky
+    }
+    style idp.integrationLayer {
+      notation "ACL Layer"
+      color slate
+    }
+  }
+
+}

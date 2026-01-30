@@ -1,0 +1,896 @@
+// ============================================================================
+// C3 - COMPONENT
+// ============================================================================
+// Zoom inside a Container to show its internal components.
+// In the IDP context, each "Capability Star" is a Container (C2).
+// This view shows the Blueprints (components) inside each Star.
+// 
+// Pattern for each C3 view:
+// - The IDP appears as context boundary (shows it's part of C2)
+// - The focus Star appears expanded with its blueprints
+// - Other Stars appear as context (collapsed) to show dependencies
+// - Integration Layer + External Systems appear on the edge
+//
+// Audience: Developers, Platform Engineers, Architects
+// Question answered: "What are the components inside this container?"
+// ============================================================================
+
+views 'C3: Star Components' {
+
+  // -------------------------------------------------------------------------
+  // SERVICE CATALOG - Internal blueprints
+  // -------------------------------------------------------------------------
+  view starCatalog of idp.starCatalog {
+    title 'C3: Star Service Catalog'
+    description 'Technology asset catalog blueprints'
+    
+    include
+      idp,
+      idp.starCatalog,
+      idp.starCatalog.*,
+      // Contexto: Stars que interagem
+      idp.starOrganization,
+      idp.starVCS,
+      idp.starResource,
+      idp.starTemplates,
+      // Integration Layer
+      idp.integrationLayer.intPortal
+    
+    include
+      // Relações internas do Catalog
+      idp.starCatalog.domain -> idp.starCatalog.system,
+      idp.starCatalog.system -> idp.starCatalog.technologyAsset,
+      idp.starCatalog.technologyAsset -> idp.starCatalog.api,
+      // Cross-star (ownership e dependências)
+      idp.starCatalog.technologyAsset -> idp.starOrganization,
+      idp.starCatalog.technologyAsset -> idp.starVCS,
+      idp.starCatalog.technologyAsset -> idp.starResource,
+      idp.starCatalog.domain -> idp.starOrganization,
+      idp.starTemplates -> idp.starCatalog.technologyAsset,
+      // Data source
+      idp.starCatalog.* -> idp.integrationLayer.intPortal
+    
+    style idp.starCatalog.technologyAsset {
+      notation "Core Blueprint (Component)"
+      color amber
+    }
+    style idp.starCatalog.domain {
+      notation "Business Domain"
+      color indigo
+    }
+    style idp.starCatalog.system {
+      notation "Product System"
+      color green
+    }
+    style idp.starCatalog.api {
+      notation "Exposed API"
+      color sky
+    }
+    style idp.starOrganization {
+      notation "→ Ownership"
+      color slate
+    }
+    style idp.starVCS {
+      notation "→ Source Code"
+      color slate
+    }
+    style idp.starResource {
+      notation "→ Infrastructure"
+      color slate
+    }
+    style idp.starTemplates {
+      notation "← Self-Service"
+      color slate
+    }
+    style idp.integrationLayer.intPortal {
+      notation "Port.io Native"
+      color slate
+    }
+  }
+  
+  // -------------------------------------------------------------------------
+  // ORGANIZATIONAL SEMANTIC - Internal blueprints
+  // -------------------------------------------------------------------------
+  view starOrganization of idp.starOrganization {
+    title 'C3: Star Organizational Semantic'
+    description 'Organizational structure and ownership blueprints'
+    
+    include
+      idp,
+      idp.starOrganization,
+      idp.starOrganization.*,
+      // Contexto: Stars que interagem (recebem ownership)
+      idp.starCatalog,
+      // Integration Layer
+      idp.integrationLayer.intPortal,
+      idp.integrationLayer.intGitHub,
+      github
+    
+    include
+      // Hierarquia organizacional
+      idp.starOrganization.group -> idp.starOrganization._team,
+      idp.starOrganization._team -> idp.starOrganization._user,
+      // GitHub identity mapping
+      idp.starOrganization._user -> idp.starOrganization.githubUser,
+      idp.starOrganization._team -> idp.starOrganization.githubOrganization,
+      // Ownership do catálogo (team/group -> catalog entities)
+      idp.starOrganization._team -> idp.starCatalog,
+      idp.starOrganization.group -> idp.starCatalog,
+      // Data sources
+      idp.starOrganization._team -> idp.integrationLayer.intPortal,
+      idp.starOrganization._user -> idp.integrationLayer.intPortal,
+      idp.starOrganization.group -> idp.integrationLayer.intPortal,
+      idp.starOrganization.githubUser -> idp.integrationLayer.intGitHub,
+      idp.starOrganization.githubOrganization -> idp.integrationLayer.intGitHub,
+      idp.integrationLayer.intGitHub -> github
+    
+    style idp.starOrganization.group {
+      notation "Tribe/Área"
+      color indigo
+    }
+    style idp.starOrganization._team {
+      notation "Squad/Chapter"
+      color amber
+    }
+    style idp.starOrganization._user {
+      notation "Portal User"
+      color green
+    }
+    style idp.starOrganization.githubUser {
+      notation "GitHub Identity"
+      color sky
+    }
+    style idp.starOrganization.githubOrganization {
+      notation "GitHub Org"
+      color sky
+    }
+    style idp.starCatalog {
+      notation "← Owns entities"
+      color slate
+    }
+    style idp.integrationLayer.intPortal {
+      notation "Port.io Native"
+      color slate
+    }
+    style idp.integrationLayer.intGitHub {
+      notation "GitHub Sync"
+      color slate
+    }
+  }
+  
+  // -------------------------------------------------------------------------
+  // VERSION CONTROL - Internal blueprints
+  // -------------------------------------------------------------------------
+  view starVCS of idp.starVCS {
+    title 'C3: Star Version Control'
+    description 'Source code and collaboration blueprints (GitHub)'
+    
+    include
+      idp,
+      idp.starVCS,
+      idp.starVCS.*,
+      // Contexto: Stars que dependem do VCS
+      idp.starCatalog,
+      idp.starCICD,
+      idp.starArtifacts,
+      idp.starSecurity,
+      idp.starQuality,
+      // Integration Layer
+      idp.integrationLayer.intGitHub,
+      github
+    
+    include
+      // Relações internas VCS
+      idp.starVCS.repository -> idp.starVCS.branch,
+      idp.starVCS.repository -> idp.starVCS.pullRequest,
+      idp.starVCS.pullRequest -> idp.starVCS.branch,
+      // Cross-star (repo é fonte para outras Stars)
+      idp.starCatalog -> idp.starVCS.repository,
+      idp.starVCS.repository -> idp.starCICD,
+      idp.starVCS.repository -> idp.starArtifacts,
+      idp.starVCS.repository -> idp.starSecurity,
+      idp.starVCS.repository -> idp.starQuality,
+      // Data source
+      idp.starVCS.* -> idp.integrationLayer.intGitHub,
+      idp.integrationLayer.intGitHub -> github
+    
+    style idp.starVCS.repository {
+      notation "Core VCS Blueprint"
+      color amber
+    }
+    style idp.starVCS.pullRequest {
+      notation "Pull Request"
+      color green
+    }
+    style idp.starVCS.branch {
+      notation "Branch"
+      color sky
+    }
+    style idp.starCatalog {
+      notation "← Asset source"
+      color slate
+    }
+    style idp.starCICD {
+      notation "→ Triggers pipelines"
+      color slate
+    }
+    style idp.starArtifacts {
+      notation "→ Produces artifacts"
+      color slate
+    }
+    style idp.starSecurity {
+      notation "→ Scanned by"
+      color slate
+    }
+    style idp.starQuality {
+      notation "→ Analyzed by"
+      color slate
+    }
+    style idp.integrationLayer.intGitHub {
+      notation "GitHub Integration"
+      color slate
+    }
+  }
+  
+  // -------------------------------------------------------------------------
+  // CI/CD PLATFORM - Internal blueprints
+  // -------------------------------------------------------------------------
+  view starCICD of idp.starCICD {
+    title 'C3: Star CI-CD Platform'
+    description 'Build, test and deploy automation blueprints'
+    
+    include
+      idp,
+      idp.starCICD,
+      idp.starCICD.*,
+      // Contexto: Stars que interagem
+      idp.starVCS,
+      idp.starArtifacts,
+      idp.starResource,
+      // Integration Layer
+      idp.integrationLayer.intGitHub,
+      github
+    
+    include
+      // Pipeline flow interno
+      idp.starCICD.ciPipeline -> idp.starCICD.pipelineRun,
+      idp.starCICD.pipelineRun -> idp.starCICD.deployment,
+      idp.starCICD.deployment -> idp.starCICD.environment,
+      // Cross-star
+      idp.starVCS -> idp.starCICD.ciPipeline,
+      idp.starCICD.pipelineRun -> idp.starArtifacts,
+      idp.starCICD.deployment -> idp.starArtifacts,
+      idp.starCICD.deployment -> idp.starResource,
+      // Data source
+      idp.starCICD.* -> idp.integrationLayer.intGitHub,
+      idp.integrationLayer.intGitHub -> github
+    
+    style idp.starCICD.ciPipeline {
+      notation "Pipeline Definition"
+      color indigo
+    }
+    style idp.starCICD.pipelineRun {
+      notation "Pipeline Execution"
+      color amber
+    }
+    style idp.starCICD.deployment {
+      notation "Deployment Job"
+      color green
+    }
+    style idp.starCICD.environment {
+      notation "Target Environment"
+      color sky
+    }
+    style idp.starVCS {
+      notation "← Triggered by code"
+      color slate
+    }
+    style idp.starArtifacts {
+      notation "→ Produces/Deploys"
+      color slate
+    }
+    style idp.starResource {
+      notation "→ Deploys to"
+      color slate
+    }
+    style idp.integrationLayer.intGitHub {
+      notation "GitHub Actions"
+      color slate
+    }
+  }
+  
+  // -------------------------------------------------------------------------
+  // SECURITY - Internal blueprints
+  // -------------------------------------------------------------------------
+  view starSecurity of idp.starSecurity {
+    title 'C3: Star Security'
+    description 'Security posture and identity blueprints'
+    
+    include
+      idp,
+      idp.starSecurity,
+      idp.starSecurity.*,
+      // Contexto: Stars que interagem
+      idp.starVCS,
+      idp.starCatalog,
+      // Integration Layer
+      idp.integrationLayer.intSecurity,
+      idp.integrationLayer.intSecrets,
+      idp.integrationLayer.intIdentity,
+      github,
+      entraId,
+      azure,
+      oci
+    
+    include
+      // Relações internas Security
+      idp.starSecurity.securityScorecard -> idp.starSecurity.securityAlert,
+      idp.starSecurity.secretVault -> idp.starSecurity.identity,
+      // Cross-star
+      idp.starVCS -> idp.starSecurity.securityScorecard,
+      idp.starVCS -> idp.starSecurity.securityAlert,
+      idp.starCatalog -> idp.starSecurity.securityScorecard,
+      // Data sources
+      idp.starSecurity.securityScorecard -> idp.integrationLayer.intSecurity,
+      idp.starSecurity.securityAlert -> idp.integrationLayer.intSecurity,
+      idp.starSecurity.secretVault -> idp.integrationLayer.intSecrets,
+      idp.starSecurity.identity -> idp.integrationLayer.intIdentity,
+      idp.integrationLayer.intSecurity -> github,
+      idp.integrationLayer.intSecrets -> azure,
+      idp.integrationLayer.intSecrets -> oci,
+      idp.integrationLayer.intIdentity -> entraId
+    
+    style idp.starSecurity.securityScorecard {
+      notation "Security Posture"
+      color red
+    }
+    style idp.starSecurity.securityAlert {
+      notation "Vulnerability Alert"
+      color red
+    }
+    style idp.starSecurity.secretVault {
+      notation "Secret Vault"
+      color amber
+    }
+    style idp.starSecurity.identity {
+      notation "Managed Identity"
+      color blue
+    }
+    style idp.starVCS {
+      notation "← Scans code"
+      color slate
+    }
+    style idp.starCatalog {
+      notation "← Asset security"
+      color slate
+    }
+    style idp.integrationLayer.intSecurity {
+      notation "GHAS Scanner"
+      color slate
+    }
+    style idp.integrationLayer.intSecrets {
+      notation "Key Vault (Azure + OCI)"
+      color slate
+    }
+    style idp.integrationLayer.intIdentity {
+      notation "SSO Provider"
+      color slate
+    }
+  }
+  
+  // -------------------------------------------------------------------------
+  // ENGINEERING METRICS - Internal blueprints
+  // -------------------------------------------------------------------------
+  view starMetrics of idp.starMetrics {
+    title 'C3: Star Engineering Metrics'
+    description 'DORA and productivity metrics blueprints'
+    
+    include
+      idp,
+      idp.starMetrics,
+      idp.starMetrics.*,
+      // Contexto: Stars que fornecem dados
+      idp.starOrganization,
+      idp.starVCS,
+      idp.starCICD,
+      // Integration Layer
+      idp.integrationLayer.intMetrics,
+      idp.integrationLayer.intGitHub,
+      linearb,
+      github
+    
+    include
+      // Relações internas
+      idp.starMetrics.engineeringMetrics -> idp.starMetrics.copilotMetrics,
+      // Cross-star (fontes de métricas)
+      idp.starOrganization -> idp.starMetrics.engineeringMetrics,
+      idp.starVCS -> idp.starMetrics.engineeringMetrics,
+      idp.starCICD -> idp.starMetrics.engineeringMetrics,
+      // Data sources
+      idp.starMetrics.engineeringMetrics -> idp.integrationLayer.intMetrics,
+      idp.starMetrics.copilotMetrics -> idp.integrationLayer.intGitHub,
+      idp.integrationLayer.intMetrics -> linearb,
+      idp.integrationLayer.intGitHub -> github
+    
+    style idp.starMetrics.engineeringMetrics {
+      notation "DORA Metrics"
+      color indigo
+    }
+    style idp.starMetrics.copilotMetrics {
+      notation "AI Productivity"
+      color indigo
+    }
+    style idp.starOrganization {
+      notation "← Team metrics"
+      color slate
+    }
+    style idp.starVCS {
+      notation "← Code velocity"
+      color slate
+    }
+    style idp.starCICD {
+      notation "← Deploy frequency"
+      color slate
+    }
+    style idp.integrationLayer.intMetrics {
+      notation "LinearB"
+      color slate
+    }
+    style idp.integrationLayer.intGitHub {
+      notation "GitHub Copilot API"
+      color slate
+    }
+  }
+  
+  // -------------------------------------------------------------------------
+  // RESOURCE CATALOG - Internal blueprints
+  // -------------------------------------------------------------------------
+  view starResource of idp.starResource {
+    title 'C3: Star Resource Catalog'
+    description 'Multi-cloud infrastructure blueprints (OCI + Azure)'
+    
+    include
+      idp,
+      idp.starResource,
+      idp.starResource.*,
+      // Contexto: Stars que consomem recursos
+      idp.starCatalog,
+      idp.starCICD,
+      idp.starDatabase,
+      // Integration Layer
+      idp.integrationLayer.intCloud.*,
+      oci,
+      azure
+    
+    include
+      // Relações internas (herança)
+      idp.starResource.resource -> idp.starResource.ociResource,
+      idp.starResource.resource -> idp.starResource.azureResource,
+      // Cross-star
+      idp.starCatalog -> idp.starResource.resource,
+      idp.starCICD -> idp.starResource.resource,
+      idp.starDatabase -> idp.starResource.resource,
+      // Data sources
+      idp.starResource.ociResource -> idp.integrationLayer.intCloud.intOCI,
+      idp.starResource.azureResource -> idp.integrationLayer.intCloud.intAzure,
+      idp.integrationLayer.intCloud.intOCI -> oci,
+      idp.integrationLayer.intCloud.intAzure -> azure
+    
+    style idp.starResource.resource {
+      notation "Abstract Resource"
+      color amber
+    }
+    style idp.starResource.ociResource {
+      notation "Oracle Cloud Resource"
+      color red
+    }
+    style idp.starResource.azureResource {
+      notation "Azure Resource"
+      color blue
+    }
+    style idp.starCatalog {
+      notation "← Asset dependencies"
+      color slate
+    }
+    style idp.starCICD {
+      notation "← Deploy targets"
+      color slate
+    }
+    style idp.starDatabase {
+      notation "← DB instances"
+      color slate
+    }
+    style idp.integrationLayer.intCloud.intOCI {
+      notation "OCI Provider"
+      color slate
+    }
+    style idp.integrationLayer.intCloud.intAzure {
+      notation "Azure Provider"
+      color slate
+    }
+  }
+  
+  // -------------------------------------------------------------------------
+  // SOFTWARE TEMPLATES - Internal blueprints
+  // -------------------------------------------------------------------------
+  view starTemplates of idp.starTemplates {
+    title 'C3: Star Software Templates'
+    description 'Self-service scaffolding blueprints'
+    
+    include
+      idp,
+      idp.starTemplates,
+      idp.starTemplates.*,
+      // Contexto: Stars que interagem
+      idp.starOrganization,
+      idp.starCatalog,
+      idp.starVCS,
+      // Integration Layer
+      idp.integrationLayer.intPortal
+    
+    include
+      // Relação interna
+      idp.starTemplates.template -> idp.starTemplates.scaffoldedEntity,
+      // Cross-star
+      idp.starOrganization -> idp.starTemplates.template,
+      idp.starTemplates.scaffoldedEntity -> idp.starCatalog,
+      idp.starTemplates.scaffoldedEntity -> idp.starVCS,
+      // Data source
+      idp.starTemplates.* -> idp.integrationLayer.intPortal
+    
+    style idp.starTemplates.template {
+      notation "Scaffolding Template"
+      color green
+    }
+    style idp.starTemplates.scaffoldedEntity {
+      notation "Generated Entity"
+      color amber
+    }
+    style idp.starOrganization {
+      notation "← Created by team"
+      color slate
+    }
+    style idp.starCatalog {
+      notation "→ Creates asset"
+      color slate
+    }
+    style idp.starVCS {
+      notation "→ Creates repo"
+      color slate
+    }
+    style idp.integrationLayer.intPortal {
+      notation "Port.io Self-Service"
+      color slate
+    }
+  }
+  
+  // -------------------------------------------------------------------------
+  // CODE QUALITY - Internal blueprints
+  // -------------------------------------------------------------------------
+  view starQuality of idp.starQuality {
+    title 'C3: Star Code Quality'
+    description 'Static analysis and coverage blueprints'
+    
+    include
+      idp,
+      idp.starQuality,
+      idp.starQuality.*,
+      // Contexto: Stars que interagem
+      idp.starVCS,
+      idp.starCatalog,
+      // Integration Layer
+      idp.integrationLayer.intQuality,
+      sonarqube
+    
+    include
+      // Relação interna
+      idp.starQuality.codeQuality -> idp.starQuality.testCoverage,
+      // Cross-star
+      idp.starVCS -> idp.starQuality.codeQuality,
+      idp.starCatalog -> idp.starQuality.codeQuality,
+      // Data source
+      idp.starQuality.* -> idp.integrationLayer.intQuality,
+      idp.integrationLayer.intQuality -> sonarqube
+    
+    style idp.starQuality.codeQuality {
+      notation "Quality Gate"
+      color green
+    }
+    style idp.starQuality.testCoverage {
+      notation "Test Coverage"
+      color green
+    }
+    style idp.starVCS {
+      notation "← Analyzes code"
+      color slate
+    }
+    style idp.starCatalog {
+      notation "← Asset quality"
+      color slate
+    }
+    style idp.integrationLayer.intQuality {
+      notation "SAST Scanner"
+      color slate
+    }
+  }
+  
+  // -------------------------------------------------------------------------
+  // ARTIFACT MANAGEMENT - Internal blueprints
+  // -------------------------------------------------------------------------
+  view starArtifacts of idp.starArtifacts {
+    title 'C3: Star Artifact Management'
+    description 'Packages and container images blueprints'
+    
+    include
+      idp,
+      idp.starArtifacts,
+      idp.starArtifacts.*,
+      // Contexto: Stars que interagem
+      idp.starVCS,
+      idp.starCICD,
+      idp.starCatalog,
+      // Integration Layer
+      idp.integrationLayer.intRegistry,
+      github
+    
+    include
+      // Relação interna
+      idp.starArtifacts.artifact -> idp.starArtifacts.containerImage,
+      // Cross-star
+      idp.starVCS -> idp.starArtifacts.artifact,
+      idp.starCICD -> idp.starArtifacts.artifact,
+      idp.starCatalog -> idp.starArtifacts.artifact,
+      // Data source
+      idp.starArtifacts.* -> idp.integrationLayer.intRegistry,
+      idp.integrationLayer.intRegistry -> github
+    
+    style idp.starArtifacts.artifact {
+      notation "Package/Artifact"
+      color indigo
+    }
+    style idp.starArtifacts.containerImage {
+      notation "Container Image"
+      color blue
+    }
+    style idp.starVCS {
+      notation "← Built from"
+      color slate
+    }
+    style idp.starCICD {
+      notation "← Produced by"
+      color slate
+    }
+    style idp.starCatalog {
+      notation "← Asset artifact"
+      color slate
+    }
+    style idp.integrationLayer.intRegistry {
+      notation "GitHub Packages"
+      color slate
+    }
+  }
+  
+  // -------------------------------------------------------------------------
+  // GRC - Internal blueprints
+  // -------------------------------------------------------------------------
+  view starGRC of idp.starGRC {
+    title 'C3: Star GRC'
+    description 'Governance, Risk & Compliance blueprints'
+    
+    include
+      idp,
+      idp.starGRC,
+      idp.starGRC.*,
+      // Contexto: Stars que interagem
+      idp.starCatalog,
+      idp.starOrganization,
+      // Integration Layer
+      idp.integrationLayer.intPortal
+    
+    include
+      // Relações internas GRC
+      idp.starGRC.policy -> idp.starGRC.policyException,
+      idp.starGRC.complianceRequirement -> idp.starGRC.complianceEvidence,
+      idp.starGRC.complianceEvidence -> idp.starGRC.auditRecord,
+      idp.starGRC.policyException -> idp.starGRC.auditRecord,
+      // Cross-star
+      idp.starCatalog -> idp.starGRC.tier,
+      idp.starCatalog -> idp.starGRC.dataClassification,
+      idp.starCatalog -> idp.starGRC.lifecycleState,
+      idp.starCatalog -> idp.starGRC.complianceRequirement,
+      idp.starGRC.policy -> idp.starCatalog,
+      idp.starGRC.auditRecord -> idp.starOrganization,
+      // Data source
+      idp.starGRC.* -> idp.integrationLayer.intPortal
+    
+    style idp.starGRC.tier {
+      notation "Criticality Tier"
+      color amber
+    }
+    style idp.starGRC.dataClassification {
+      notation "Data Class"
+      color amber
+    }
+    style idp.starGRC.lifecycleState {
+      notation "Lifecycle"
+      color amber
+    }
+    style idp.starGRC.policy {
+      notation "Policy as Code"
+      color indigo
+    }
+    style idp.starGRC.complianceRequirement {
+      notation "PCI, SOX, GDPR, LGPD"
+      color indigo
+    }
+    style idp.starGRC.complianceEvidence {
+      notation "Audit Evidence"
+      color green
+    }
+    style idp.starGRC.auditRecord {
+      notation "Audit Trail"
+      color sky
+    }
+    style idp.starGRC.policyException {
+      notation "Approved Exception"
+      color red
+    }
+    style idp.starCatalog {
+      notation "← Governance applied"
+      color slate
+    }
+    style idp.starOrganization {
+      notation "← Ownership audit"
+      color slate
+    }
+    style idp.integrationLayer.intPortal {
+      notation "Port.io Native"
+      color slate
+    }
+  }
+  
+  // -------------------------------------------------------------------------
+  // FEATURE MANAGEMENT - Internal blueprints
+  // -------------------------------------------------------------------------
+  view starFeatures of idp.starFeatures {
+    title 'C3: Star Feature Management'
+    description 'Feature flags and progressive delivery blueprints'
+    
+    include
+      idp,
+      idp.starFeatures,
+      idp.starFeatures.*,
+      // Contexto: Stars que interagem
+      idp.starCatalog,
+      idp.starCICD,
+      // Integration Layer
+      idp.integrationLayer.intFeatureFlags,
+      unleash
+    
+    include
+      // Relação interna
+      idp.starFeatures.featureFlag -> idp.starFeatures.flagStrategy,
+      // Cross-star
+      idp.starCatalog -> idp.starFeatures.featureFlag,
+      idp.starCICD -> idp.starFeatures.featureFlag,
+      // Data source
+      idp.starFeatures.* -> idp.integrationLayer.intFeatureFlags,
+      idp.integrationLayer.intFeatureFlags -> unleash
+    
+    style idp.starFeatures.featureFlag {
+      notation "Feature Flag"
+      color green
+    }
+    style idp.starFeatures.flagStrategy {
+      notation "Rollout Strategy"
+      color amber
+    }
+    style idp.starCatalog {
+      notation "← Asset features"
+      color slate
+    }
+    style idp.starCICD {
+      notation "← Progressive deploy"
+      color slate
+    }
+    style idp.integrationLayer.intFeatureFlags {
+      notation "Unleash Integration"
+      color slate
+    }
+  }
+  
+  // -------------------------------------------------------------------------
+  // DATABASE MANAGEMENT - Internal blueprints
+  // -------------------------------------------------------------------------
+  view starDatabase of idp.starDatabase {
+    title 'C3: Star Database Management'
+    description 'Database schemas and migrations blueprints'
+    
+    include
+      idp,
+      idp.starDatabase,
+      idp.starDatabase.*,
+      // Contexto: Stars que interagem
+      idp.starCatalog,
+      idp.starResource,
+      idp.starCICD,
+      // Integration Layer
+      idp.integrationLayer.intMigration,
+      liquibase
+    
+    include
+      // Relação interna
+      idp.starDatabase.databaseSchema -> idp.starDatabase.migration,
+      // Cross-star
+      idp.starCatalog -> idp.starDatabase.databaseSchema,
+      idp.starDatabase.databaseSchema -> idp.starResource,
+      idp.starCICD -> idp.starDatabase.migration,
+      // Data source
+      idp.starDatabase.* -> idp.integrationLayer.intMigration,
+      idp.integrationLayer.intMigration -> liquibase
+    
+    style idp.starDatabase.databaseSchema {
+      notation "Database Schema"
+      color indigo
+    }
+    style idp.starDatabase.migration {
+      notation "Liquibase Changeset"
+      color amber
+    }
+    style idp.starCatalog {
+      notation "← Asset database"
+      color slate
+    }
+    style idp.starResource {
+      notation "→ Runs on"
+      color slate
+    }
+    style idp.starCICD {
+      notation "← Migration runs"
+      color slate
+    }
+    style idp.integrationLayer.intMigration {
+      notation "Liquibase Integration"
+      color slate
+    }
+  }
+  
+  // -------------------------------------------------------------------------
+  // MULTI-CLOUD - Focus on OCI + Azure
+  // -------------------------------------------------------------------------
+  view multicloud of idp.starResource {
+    title 'C3: Multi-Cloud Detail'
+    description 'Infrastructure resources in OCI + Azure'
+    
+    include
+      idp,
+      idp.starResource,
+      idp.starResource.*,
+      idp.integrationLayer.intCloud,
+      idp.integrationLayer.intCloud.*,
+      oci,
+      azure
+    
+    include
+      idp.starResource.resource -> idp.starResource.ociResource,
+      idp.starResource.resource -> idp.starResource.azureResource,
+      idp.starResource.ociResource -> idp.integrationLayer.intCloud.intOCI,
+      idp.starResource.azureResource -> idp.integrationLayer.intCloud.intAzure,
+      idp.integrationLayer.intCloud.intOCI -> oci,
+      idp.integrationLayer.intCloud.intAzure -> azure
+    
+    style idp.starResource.ociResource {
+      notation "OCI Resource"
+      color red
+    }
+    style idp.starResource.azureResource {
+      notation "Azure Resource"
+      color blue
+    }
+    style idp.starResource.resource {
+      notation "Abstract Resource"
+      color amber
+    }
+  }
+  
+}

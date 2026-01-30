@@ -1,0 +1,36 @@
+// ============================================================================
+// C1 - SYSTEM CONTEXT
+// ============================================================================
+// Highest level of abstraction in the C4 Model.
+// Shows the system as a "black box" and its context:
+//   - Who uses the system (actors/personas)
+//   - Which external systems it communicates with
+// 
+// Audience: Technical and non-technical stakeholders
+// Question answered: "What is this system and who/what interacts with it?"
+// ============================================================================
+
+views {
+
+  // System Context: IDP + Personas + External Systems
+  view index {
+    title 'C1: System Context'
+    description 'Internal Developer Portal - Context diagram | Q1 2026'
+    
+    include *
+    
+    style * {
+      color secondary
+    }
+    style idp {
+      color primary
+    }
+    style element.kind == actor {
+      color amber
+    }
+    style element.kind == externalSystem {
+      color slate
+    }
+  }
+
+}

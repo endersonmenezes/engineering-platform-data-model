@@ -1,0 +1,32 @@
+// ============================================================================
+// BLUEPRINTS: Engineering Metrics
+// ============================================================================
+
+model {
+  extend idp.starMetrics {
+    
+    engineeringMetrics = blueprint 'engineeringMetrics' {
+      #metrics
+      description 'DORA metrics: deploy freq, lead time, MTTR'
+      icon bootstrap:graph-up-arrow
+      
+      // Cross-Star Relations
+      this -[dependsOn]-> idp.starVCS.repository 'measuresRepo'
+      this -[dataSource]-> idp.integrationLayer.intMetrics { #dataFlow }
+    }
+    
+    copilotMetrics = blueprint 'copilotMetrics' {
+      #metrics #github
+      description 'GitHub Copilot adoption metrics'
+      icon tech:github-copilot
+      
+      // Cross-Star Relations
+      this -[dependsOn]-> idp.starOrganization._team 'measuresTeam'
+      this -[dataSource]-> idp.integrationLayer.intGitHub { #dataFlow }
+    }
+    
+    // Internal Relations (kinded)
+    engineeringMetrics -[includes]-> copilotMetrics 'includesAI'
+    
+  }
+}

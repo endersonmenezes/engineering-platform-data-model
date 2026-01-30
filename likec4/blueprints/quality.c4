@@ -1,0 +1,26 @@
+// ============================================================================
+// BLUEPRINTS: Code Quality
+// ============================================================================
+
+model {
+  extend idp.starQuality {
+    
+    codeQuality = blueprint 'codeQuality' {
+      description 'Quality metrics: bugs, debt, smells'
+      icon tech:sonarqube
+      
+      this -[dataSource]-> idp.integrationLayer.intQuality { #dataFlow }
+    }
+    
+    testCoverage = blueprint 'testCoverage' {
+      description 'Test coverage (unit, integration)'
+      icon bootstrap:check2-all
+      
+      this -[dataSource]-> idp.integrationLayer.intQuality { #dataFlow }
+    }
+    
+    // Internal Relations (kinded)
+    codeQuality -[includes]-> testCoverage 'hasCoverage'
+    
+  }
+}

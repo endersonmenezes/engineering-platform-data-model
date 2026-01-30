@@ -1,0 +1,151 @@
+// Platform Data Model - Specification
+// Open Source | LikeC4 + Port.io
+// Best Practices: https://likec4.dev/dsl/relationships/
+
+specification {
+
+  // =========================================================================
+  // ELEMENT KINDS (with Global Notations)
+  // =========================================================================
+  // Notations appear in the legend (? icon in the bottom right corner)
+  // Ref: https://likec4.dev/dsl/notations/#global-notations
+  // =========================================================================
+
+  element actor {
+    notation "Persona that interacts with the IDP"
+    style {
+      shape person
+      color amber
+    }
+  }
+
+  element system {
+    notation "IDP internal system"
+    style {
+      shape browser
+      color indigo
+    }
+  }
+
+  element externalSystem {
+    notation "External system (SaaS / Cloud)"
+    style {
+      shape rectangle
+      color slate
+      border solid
+    }
+  }
+
+  element capability {
+    notation "Star - Cluster of related Blueprints"
+    style {
+      shape bucket
+      color sky
+      opacity 80%
+    }
+  }
+
+  element blueprint {
+    notation "Blueprint - Data entity in the Portal"
+    style {
+      shape document
+      color green
+    }
+  }
+
+  element integration {
+    notation "Integration - Connector for external system"
+    style {
+      shape storage
+      color gray
+      border dotted
+    }
+  }
+
+  // =========================================================================
+  // RELATIONSHIP KINDS (with Global Notations)
+  // =========================================================================
+  // Allows using kinded syntax: -[syncs]-> or .syncs
+  // Notations for relationships still under development in LikeC4
+  // Ref: https://likec4.dev/dsl/relationships/#relationship-kinds
+  // =========================================================================
+
+  // --- Data Flow ---
+  relationship syncs {
+    notation "🔄 Syncs data bidirectionally"
+    color gray
+    line dotted
+  }
+
+  relationship dataSource {
+    notation "📥 Gets data from (data source)"
+    color green
+    line dashed
+  }
+
+  relationship produces {
+    notation "📤 Produces / Generates"
+    color indigo
+  }
+
+  // --- Ownership & Governance ---
+  relationship owns {
+    notation "👤 Owns / Is responsible for"
+    color amber
+  }
+
+  relationship governs {
+    notation "📋 Governs / Controls"
+    color red
+  }
+
+  // --- Dependencies ---
+  relationship dependsOn {
+    notation "🔗 Depends on"
+    color sky
+  }
+
+  relationship includes {
+    notation "📦 Includes / Contains"
+    color gray
+  }
+
+  // --- Operations ---
+  relationship triggers {
+    notation "▶️ Triggers / Initiates"
+    color slate
+  }
+
+  relationship deploys {
+    notation "🚀 Deploys to"
+    color blue
+  }
+
+  relationship authenticates {
+    notation "🔐 Authenticates via"
+    color amber
+    line dashed
+  }
+
+  // =========================================================================
+  // ELEMENT TAGS
+  // =========================================================================
+
+  tag core       // Core entity
+  tag oci        // Oracle Cloud
+  tag azure      // Microsoft Azure
+  tag github     // GitHub ecosystem
+  tag security   // Security-related
+  tag metrics    // Metrics & observability
+  tag selfservice // Self-service capability
+
+  // =========================================================================
+  // RELATIONSHIP TAGS (for filtering in views)
+  // =========================================================================
+
+  tag sync       // Data synchronization
+  tag ownership  // Ownership relation
+  tag dataFlow   // Data flow direction
+  tag governance // Governance/compliance
+
+}
