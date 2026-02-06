@@ -7,9 +7,9 @@ This repository contains a **Star Schema Data Model for Internal Developer Porta
 ## Key Architecture Concepts
 
 - **13 Capability Stars**: Top-level groupings (Service Catalog, Organization, VCS, CI/CD, Resources, Artifacts, Security, Quality, Metrics, Features, Templates, GRC, Database)
-- **Blueprints**: Data entities inside each star (e.g., `repository`, `ciPipeline`, `securityScorecard`)
+- **Blueprints**: Data entities inside each star (e.g., `repository`, `ciPipeline`, `securityScorecard`). The entity architecture follows [Backstage](https://backstage.io/) (Component, API, System, Domain, Resource, Group, User, Template) and the blueprint concept is inspired by [Port.io's Blueprint model](https://docs.port.io/build-your-software-catalog/customize-integrations/configure-data-model/setup-blueprint/). The data model is **tool-agnostic** — implementable in Backstage, Port.io, Cortex, OpsLevel, or any configurable IDP
 - **Integration Layer**: ACL pattern connecting blueprints to external systems
-- **4 Personas**: Developer, Platform Engineer, Tech Lead, Security Engineer
+- **6 Personas**: Developer, Platform Engineer, Engineering Manager, SRE, Security Engineer, Executive
 - **C4 Levels**: C1 (System Context), C2 (Containers/Stars), C3 (Components/Blueprints), Dynamic (Journeys)
 
 ## File Organization
@@ -62,10 +62,16 @@ Views are organized by C4 level:
 | `platformEngineerTemplates` | Platform Engineer | Managing Software Templates |
 | `platformEngineerMultiCloud` | Platform Engineer | Provisioning OCI + Azure resources |
 | `platformEngineerIntegrations` | Platform Engineer | Managing integration connectors |
-| `techLeadScorecard` | Tech Lead | Production Readiness evaluation |
-| `techLeadMetrics` | Tech Lead | DORA Metrics and Copilot tracking |
+| `engineeringManagerScorecard` | Engineering Manager | Production Readiness evaluation |
+| `engineeringManagerMetrics` | Engineering Manager | DORA Metrics and Copilot tracking |
+| `engineeringManagerDelivery` | Engineering Manager | Sprint progress, team activity, PR velocity |
+| `sreReliability` | SRE | SLO dashboard, deployment health, infrastructure |
+| `sreIncidentResponse` | SRE | Incident detection, triage, mitigation, postmortem |
+| `sreOperations` | SRE | Day-to-day operations, pipelines, resources |
 | `securityEngineerPosture` | Security Engineer | Security posture overview |
 | `securityEngineerIncident` | Security Engineer | Critical alert response (MTTR) |
+| `executiveOverview` | Executive | Org-wide health, team performance, Copilot ROI |
+| `executiveGovernance` | Executive | Compliance posture, cost management, tier governance |
 
 ## Resource Catalog Types
 

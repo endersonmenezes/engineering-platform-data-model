@@ -305,14 +305,14 @@ views 'Journeys' {
   }
 
   // =========================================================================
-  // TECH LEAD JOURNEY: Visibility & Governance
+  // ENGINEERING MANAGER JOURNEY: Visibility, Delivery & Governance
   // =========================================================================
   
-  dynamic view techLeadScorecard {
-    title 'Tech Lead / Production Readiness'
-    description 'Evaluating team readiness'
+  dynamic view engineeringManagerScorecard {
+    title 'Engineering Manager / Production Readiness'
+    description 'Evaluating team service scorecards across security, quality and documentation'
     
-    techLead 
+    engineeringManager 
       -> idp.starOrganization._team 'Accesses team dashboard'
       -> idp.starVCS.repository 'Lists team repos'
     
@@ -330,20 +330,22 @@ views 'Journeys' {
       -> idp.starCICD.ciPipeline 'Pipeline status'
       -> idp.starCICD.deployment 'Deploy frequency' {
         notes '
-          **Scorecard:**
-          - Quality Gate: Pass
-          - Coverage: 85%
-          - Vulnerabilities: 0 critical
-          - Deploy freq: 3x/week
+          **Production Readiness Scorecard:**
+          - Quality Gate: Pass ✅
+          - Coverage: 85% ✅
+          - Vulnerabilities: 0 critical ✅
+          - CI/CD Active ✅
+          - Documentation ✅
+          - Secrets in Vault ✅
         '
       }
   }
   
-  dynamic view techLeadMetrics {
-    title 'Tech Lead / DORA Metrics'
-    description 'Tracking engineering metrics'
+  dynamic view engineeringManagerMetrics {
+    title 'Engineering Manager / DORA Metrics'
+    description 'Tracking DORA metrics, lead time, deploy frequency and team productivity'
     
-    techLead 
+    engineeringManager 
       -> idp.starOrganization._team 'Selects team' {
         notes '
           **DORA Metrics:**
@@ -360,11 +362,11 @@ views 'Journeys' {
       -> linearb 'Sends data'
       -> idp.starMetrics.engineeringMetrics 'Calculates DORA metrics' {
         notes '
-          **Calculated metrics:**
+          **Team Performance:**
           - Lead time: 2.3 days
-          - Deploy freq: 4x/week
-          - MTTR: 1.2 hours
-          - CFR: 5%
+          - Deploy freq: 4.2x/day
+          - MTTR: 45 min
+          - Change fail rate: 3.2%
         '
       }
     
@@ -376,6 +378,216 @@ views 'Journeys' {
           - Active users: 85%
           - Acceptance rate: 32%
           - Lines suggested: 45k
+        '
+      }
+  }
+
+  dynamic view engineeringManagerDelivery {
+    title 'Engineering Manager / Team Delivery'
+    description 'Sprint progress, team member activity, PR velocity and deployment cadence'
+    
+    engineeringManager 
+      -> idp.starOrganization._team 'Reviews team activity' {
+        notes '
+          **Team Overview:**
+          Members, PRs created,
+          reviews given, deploys executed
+        '
+      }
+    
+    idp.starOrganization._team 
+      -> idp.starVCS.repository 'Team repositories'
+    
+    // PR and review activity
+    idp.starVCS.repository 
+      -> idp.starVCS.pullRequest 'Open PRs and review status' {
+        notes '
+          **Delivery Metrics:**
+          - Open PRs: 8
+          - Avg review time: 3.2h
+          - Merge rate: 92%
+        '
+      }
+    
+    // CI/CD pipeline health
+    idp.starVCS.pullRequest 
+      -> idp.starCICD.ciPipeline 'Pipeline runs'
+      -> idp.starCICD.pipelineRun 'Build success rate'
+    
+    // Deployment cadence
+    idp.starCICD.pipelineRun 
+      -> idp.starCICD.deployment 'Deployment timeline'
+      -> idp.starCICD.environment 'Environment status' {
+        notes '
+          **Sprint 24 Progress:**
+          - Completed: 18/24 stories (75%)
+          - Deploys this week: 12
+          - Build success rate: 94%
+        '
+      }
+    
+    // Compliance check
+    engineeringManager 
+      -> idp.starGRC.complianceRequirement 'Reviews compliance gaps' {
+        notes '
+          **Compliance Status:**
+          - SOC2: 94%
+          - GDPR: 98%
+          - PCI-DSS: 82%
+        '
+      }
+  }
+
+  // =========================================================================
+  // SRE JOURNEY: Reliability, Incidents & Operations
+  // =========================================================================
+  
+  dynamic view sreReliability {
+    title 'SRE / Reliability Overview'
+    description 'System reliability dashboard with SLOs, deployment health and infrastructure status'
+    
+    sre 
+      -> idp.starMetrics.engineeringMetrics 'Reviews SLO dashboard' {
+        notes '
+          **Service Level Objectives:**
+          - payment-api: 99.95% (current: 99.98%)
+          - auth-service: 99.99% (current: 99.97%)
+          - user-api: 99.9% (current: 99.92%)
+          - Budget remaining tracked per service
+        '
+      }
+    
+    // Deployment health
+    sre 
+      -> idp.starCICD.deployment 'Reviews deployment timeline' {
+        notes '
+          **Recent Deployments:**
+          Canary/Blue-Green status,
+          rollback candidates
+        '
+      }
+      -> idp.starCICD.environment 'Checks environment health'
+    
+    // Infrastructure health
+    sre 
+      -> idp.starResource.resource 'Reviews infrastructure' {
+        notes '
+          **Cluster Health:**
+          - CPU utilization per cluster
+          - Memory and disk usage
+          - Node count and pod status
+        '
+      }
+    
+    parallel {
+      idp.starResource.resource -> idp.starResource.ociResource 'OCI cluster health'
+      idp.starResource.resource -> idp.starResource.azureResource 'Azure cluster health'
+    }
+  }
+  
+  dynamic view sreIncidentResponse {
+    title 'SRE / Incident Response'
+    description 'Incident detection, triage, mitigation and postmortem workflow'
+    
+    // Alert triggers incident
+    github 
+      -> idp.starSecurity.securityAlert 'Alert triggered' {
+        notes '
+          **Incident:**
+          INC-1234 API Latency Spike
+          Severity: P1
+          Detected: automated monitoring
+        '
+      }
+    
+    // Identify affected service
+    idp.starSecurity.securityAlert 
+      -> idp.starCatalog.technologyAsset 'Identifies affected service'
+      -> idp.starOrganization._team 'Identifies owner team' {
+        notes '
+          **Triage:**
+          Owner team notified,
+          on-call engineer paged
+        '
+      }
+    
+    // SRE investigates
+    sre 
+      -> idp.starCICD.deployment 'Checks recent deployments' {
+        notes '
+          **Investigation:**
+          - Last deploy: 15 min ago
+          - Change: payment-api v2.4.1
+          - Candidate for rollback
+        '
+      }
+    
+    // Rollback and verify
+    idp.starCICD.deployment 
+      -> idp.starCICD.pipelineRun 'Triggers rollback pipeline'
+      -> idp.starCICD.environment 'Verifies environment' {
+        notes '
+          **Mitigation:**
+          - Rollback to v2.4.0
+          - Latency normalized
+          - MTTR: 23 minutes
+        '
+      }
+    
+    // Postmortem
+    sre 
+      -> idp.starQuality.codeQuality 'Reviews code quality for root cause' {
+        notes '
+          **Postmortem:**
+          - Root cause identified
+          - Action items created
+          - Runbook updated
+        '
+      }
+  }
+  
+  dynamic view sreOperations {
+    title 'SRE / Operations Dashboard'
+    description 'Day-to-day operations: deployments, pipelines, resource utilization'
+    
+    sre 
+      -> idp.starCICD.ciPipeline 'Reviews active pipelines' {
+        notes '
+          **Pipeline Health:**
+          - Active: 24
+          - Success rate: 94%
+          - Avg duration: 8.5 min
+        '
+      }
+      -> idp.starCICD.pipelineRun 'Checks recent runs'
+      -> idp.starCICD.deployment 'Deployment timeline' {
+        notes '
+          **Deployment Timeline:**
+          - 10:45 payment-api → prod-us-east ✅
+          - 10:30 auth-service → prod-us-east ✅
+          - 10:15 user-service → staging ⚠️
+          - 09:45 notification → prod-eu-west ✅
+        '
+      }
+    
+    // Resource monitoring
+    sre 
+      -> idp.starResource.resource 'Monitors resources'
+    
+    parallel {
+      idp.starResource.resource -> oci 'OCI resource utilization'
+      idp.starResource.resource -> azure 'Azure resource utilization'
+    }
+    
+    // Metrics
+    sre 
+      -> idp.starMetrics.engineeringMetrics 'Reviews operational metrics' {
+        notes '
+          **Operational KPIs:**
+          - Uptime: 99.9%
+          - Active P1: 2
+          - Active P2: 3
+          - MTTR: 45 min
         '
       }
   }
@@ -454,6 +666,121 @@ views 'Journeys' {
           - MTTR: 45 min
           - Hotfix deployed
           - Stakeholders notified
+        '
+      }
+  }
+
+  // =========================================================================
+  // EXECUTIVE JOURNEY: Strategic Oversight & Governance
+  // =========================================================================
+  
+  dynamic view executiveOverview {
+    title 'Executive / Organization Health'
+    description 'Org-wide delivery velocity, security posture, compliance status and cost analysis'
+    
+    executive 
+      -> idp.starMetrics.engineeringMetrics 'Reviews org-wide KPIs' {
+        notes '
+          **Organization Health:**
+          - Deploy frequency: 4.2x/day
+          - Security posture: 92%
+          - Compliance: 98%
+          - Developer satisfaction: 4.2/5
+        '
+      }
+    
+    // Team performance comparison
+    executive 
+      -> idp.starOrganization.group 'Reviews tribes/areas'
+      -> idp.starOrganization._team 'Compares team performance' {
+        notes '
+          **Team Comparison:**
+          | Team       | Velocity | Quality | Security |
+          | Platform   | A        | A       | A        |
+          | Payments   | A        | B       | A        |
+          | User Svcs  | B        | B       | A        |
+          | Analytics  | B        | A       | B        |
+        '
+      }
+    
+    // Delivery trend
+    idp.starOrganization._team 
+      -> idp.starVCS.repository 'Team repositories'
+      -> idp.starCICD.deployment 'Deployment frequency trend' {
+        notes '
+          **12-Month Trend:**
+          Deployment frequency up 130%
+          Lead time reduced by 45%
+        '
+      }
+    
+    // Copilot ROI
+    executive 
+      -> idp.starMetrics.copilotMetrics 'Reviews AI investment ROI' {
+        notes '
+          **Copilot ROI:**
+          - Active users: 85% of org
+          - Acceptance rate: 32%
+          - Estimated productivity gain: 22%
+        '
+      }
+  }
+  
+  dynamic view executiveGovernance {
+    title 'Executive / Governance & Costs'
+    description 'Compliance posture, cost management by team, strategic initiatives tracking'
+    
+    executive 
+      -> idp.starGRC.complianceRequirement 'Reviews compliance frameworks' {
+        notes '
+          **Compliance Posture:**
+          - SOC 2 Type II: 98% ✅
+          - GDPR: 100% ✅
+          - PCI DSS: 87% ⚠️
+          - Overall: 91%
+        '
+      }
+      -> idp.starGRC.complianceEvidence 'Checks evidence coverage'
+      -> idp.starGRC.auditRecord 'Reviews audit trail'
+    
+    // Policy compliance
+    executive 
+      -> idp.starGRC.policy 'Reviews policy adherence'
+      -> idp.starGRC.policyException 'Reviews exceptions' {
+        notes '
+          **Policy Exceptions:**
+          - 3 active exceptions
+          - 2 expiring this quarter
+          - All require renewal review
+        '
+      }
+    
+    // Cost by team
+    executive 
+      -> idp.starOrganization.group 'Reviews cost allocation'
+      -> idp.starResource.resource 'Infrastructure costs' {
+        notes '
+          **Cost Management:**
+          - Monthly spend: $248K
+          - vs Budget: -12%
+          - YTD savings: $340K
+          - Top spender: Platform ($82K)
+        '
+      }
+    
+    parallel {
+      idp.starResource.resource -> idp.starResource.ociResource 'OCI costs'
+      idp.starResource.resource -> idp.starResource.azureResource 'Azure costs'
+    }
+    
+    // Tier governance
+    executive 
+      -> idp.starGRC.tier 'Reviews criticality tiers' {
+        notes '
+          **Tier Distribution:**
+          - Tier 1 (Critical): 12 services
+          - Tier 2 (Important): 45 services
+          - Tier 3 (Standard): 85 services
         '
       }
   }

@@ -35,23 +35,51 @@ model {
     navigateTo platformEngineerMultiCloud
   }
   
-  techLead -> idp.starMetrics 'monitors DORA' {
-    navigateTo techLeadMetrics
+  // Engineering Manager -> metrics, quality, delivery, organization, GRC
+  engineeringManager -> idp.starMetrics 'monitors DORA' {
+    navigateTo engineeringManagerMetrics
   }
-  techLead -> idp.starQuality 'tracks quality' {
-    navigateTo techLeadScorecard
+  engineeringManager -> idp.starQuality 'tracks quality' {
+    navigateTo engineeringManagerScorecard
   }
-  techLead -> idp.starOrganization 'manages team'
+  engineeringManager -> idp.starOrganization 'manages team'
+  engineeringManager -> idp.starGRC 'defines ownership' {
+    #ownership
+  }
+  engineeringManager -> idp.starCICD 'reviews delivery' {
+    navigateTo engineeringManagerDelivery
+  }
+
+  // SRE -> CI/CD, security, metrics, resource, quality
+  sre -> idp.starCICD 'manages deployments' {
+    navigateTo sreReliability
+  }
+  sre -> idp.starSecurity 'responds to incidents' {
+    navigateTo sreIncidentResponse
+  }
+  sre -> idp.starMetrics 'monitors SLOs' {
+    navigateTo sreOperations
+  }
+  sre -> idp.starResource 'manages infrastructure'
   
+  // Security Engineer -> security, GRC, secrets, audit
   securityEngineer -> idp.starSecurity 'audits security' {
     navigateTo securityEngineerPosture
   }
   securityEngineer -> idp.starGRC 'manages compliance' {
     navigateTo securityEngineerIncident
   }
-  techLead -> idp.starGRC 'defines ownership' {
-    #ownership
+
+  // Executive -> metrics, GRC, organization, catalog
+  executive -> idp.starMetrics 'reviews org-wide KPIs' {
+    navigateTo executiveOverview
   }
+  executive -> idp.starGRC 'oversees governance' {
+    navigateTo executiveGovernance
+  }
+  executive -> idp.starOrganization 'reviews teams'
+  executive -> idp.starCatalog 'reviews portfolio'
+  
   platformEngineer -> idp.starGRC 'implements policies' {
     #governance
   }

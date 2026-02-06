@@ -12,7 +12,7 @@
 
 A **reference data model** for building Internal Developer Portals, organized into **13 Capability Stars** where each star is a platform capability domain. The **Technology Asset** (`technologyAsset`) is the central hub connecting all stars.
 
-Follows **Backstage** core entity architecture: Component, API, System, Domain, Resource, Group, User, and Template.
+The model draws from two key references: [Backstage](https://backstage.io/) for the core entity architecture (Component, API, System, Domain, Resource, Group, User, Template) and [Port.io's Blueprint model](https://docs.port.io/build-your-software-catalog/customize-integrations/configure-data-model/setup-blueprint/) for the concept of *Blueprints* as configurable data entities. However, this data model is **tool-agnostic** — it can be implemented in Backstage, Port.io, Cortex, OpsLevel, or any IDP that supports a configurable data model.
 
 📖 **[View Interactive Diagrams](https://endersonmenezes.github.io/engineering-platform-data-model/)** · 📂 **[Technical Reference (AGENTS.md)](AGENTS.md)**
 

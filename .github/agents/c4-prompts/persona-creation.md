@@ -10,14 +10,18 @@
 
 Personas (actors) represent the different types of users who interact with the Internal Developer Portal. Each persona has specific capabilities they access and specific workflows (journeys) they follow.
 
-## Current Personas
+## Current Personas (Port.io Aligned)
 
-| Persona | Variable | Primary Stars | Journeys |
-|---------|----------|---------------|----------|
-| Developer | `developer` | starTemplates, starCatalog, starVCS, starCICD, starArtifacts | developerOnboarding, developerSelfService, developerDailyWork |
-| Platform Engineer | `platformEngineer` | starTemplates, integrationLayer, starResource, starCICD | platformEngineerTemplates, platformEngineerMultiCloud, platformEngineerIntegrations |
-| Tech Lead | `techLead` | starMetrics, starQuality, starOrganization, starGRC, starCatalog | techLeadScorecard, techLeadMetrics |
-| Security Engineer | `securityEngineer` | starSecurity, starGRC, starCatalog | securityEngineerPosture, securityEngineerIncident |
+Based on [Port.io End User Personas](https://docs.getport.io/), the model has 6 personas:
+
+| Persona | Variable | Port.io Role | Primary Stars | Journeys |
+|---------|----------|-------------|---------------|----------|
+| Application Developer | `developer` | Member | starTemplates, starCatalog, starVCS, starCICD, starArtifacts | developerOnboarding, developerSelfService, developerDailyWork |
+| Platform Engineer | `platformEngineer` | Admin/Builder | starTemplates, integrationLayer, starResource, starCICD | platformEngineerTemplates, platformEngineerMultiCloud, platformEngineerIntegrations |
+| Engineering Manager | `engineeringManager` | Member | starMetrics, starQuality, starOrganization, starGRC, starCatalog | engineeringManagerScorecard, engineeringManagerMetrics, engineeringManagerDelivery |
+| Site Reliability Engineer | `sre` | Member | starCICD, starResource, starMetrics, starSecurity | sreReliability, sreIncidentResponse, sreOperations |
+| Security Engineer | `securityEngineer` | Member | starSecurity, starGRC, starCatalog | securityEngineerPosture, securityEngineerIncident |
+| Technology Executive | `executive` | Member | starMetrics, starGRC, starOrganization, starResource | executiveOverview, executiveGovernance |
 
 ## Persona Structure in model.c4
 
@@ -201,22 +205,22 @@ Then create the corresponding journey in `views/journeys.c4`.
 
 ## Current Persona Capability Matrix
 
-| Capability | Developer | Platform Eng | Tech Lead | Security Eng |
-|-----------|:---------:|:------------:|:---------:|:------------:|
-| starCatalog | ✅ | ⬜ | ✅ | ✅ |
-| starOrganization | ⬜ | ⬜ | ✅ | ⬜ |
-| starVCS | ✅ | ⬜ | ⬜ | ⬜ |
-| starCICD | ✅ | ✅ | ⬜ | ⬜ |
-| starResource | ⬜ | ✅ | ⬜ | ⬜ |
-| starArtifacts | ✅ | ⬜ | ⬜ | ⬜ |
-| starSecurity | ⬜ | ⬜ | ⬜ | ✅ |
-| starQuality | ⬜ | ⬜ | ✅ | ⬜ |
-| starMetrics | ⬜ | ⬜ | ✅ | ⬜ |
-| starFeatures | ⬜ | ⬜ | ⬜ | ⬜ |
-| starTemplates | ✅ | ✅ | ⬜ | ⬜ |
-| starGRC | ⬜ | ⬜ | ✅ | ✅ |
-| starDatabase | ⬜ | ⬜ | ⬜ | ⬜ |
-| integrationLayer | ⬜ | ✅ | ⬜ | ⬜ |
+| Capability | Developer | Platform Eng | Eng Manager | SRE | Security Eng | Executive |
+|-----------|:---------:|:------------:|:-----------:|:---:|:------------:|:---------:|
+| starCatalog | ✅ | ⬜ | ✅ | ⬜ | ✅ | ⬜ |
+| starOrganization | ⬜ | ⬜ | ✅ | ⬜ | ⬜ | ✅ |
+| starVCS | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| starCICD | ✅ | ✅ | ⬜ | ✅ | ⬜ | ⬜ |
+| starResource | ⬜ | ✅ | ⬜ | ✅ | ⬜ | ✅ |
+| starArtifacts | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| starSecurity | ⬜ | ⬜ | ⬜ | ✅ | ✅ | ⬜ |
+| starQuality | ⬜ | ⬜ | ✅ | ⬜ | ⬜ | ⬜ |
+| starMetrics | ⬜ | ⬜ | ✅ | ✅ | ⬜ | ✅ |
+| starFeatures | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| starTemplates | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| starGRC | ⬜ | ⬜ | ✅ | ⬜ | ✅ | ✅ |
+| starDatabase | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| integrationLayer | ⬜ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
 
 ## Checklist for New Persona
 

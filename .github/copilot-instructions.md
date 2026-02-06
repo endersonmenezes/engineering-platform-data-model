@@ -6,6 +6,8 @@ This repository contains a **Star Schema Data Model for Internal Developer Porta
 
 The model is organized into **13 Capability Stars** (clusters of related blueprints), where each star represents a platform capability domain. The **Technology Asset** (`technologyAsset`) serves as the central hub connecting all stars.
 
+The model draws from two key references: [Backstage](https://backstage.io/) for the core entity architecture (Component, API, System, Domain, Resource, Group, User, Template) and [Port.io's Blueprint model](https://docs.port.io/build-your-software-catalog/customize-integrations/configure-data-model/setup-blueprint/) for the concept of *Blueprints* as configurable data entities. The data model is **tool-agnostic** — it can be implemented in Backstage, Port.io, Cortex, OpsLevel, or any IDP with a configurable data model. When generating code or documentation, never assume a specific portal tool.
+
 ## Technology Stack
 
 - **Language**: LikeC4 DSL (`.c4` files)
@@ -73,14 +75,18 @@ likec4/
 | GRC | `starGRC` | tier, dataClassification, lifecycleState, policy, policyException, complianceRequirement, complianceEvidence, auditRecord |
 | Database Management | `starDatabase` | databaseSchema, migration |
 
-### 4 Personas (Actors)
+### 6 Personas (Actors)
 
-| Persona | Variable | Primary Capabilities |
-|---------|----------|---------------------|
-| Developer | `developer` | starTemplates, starCatalog, starVCS |
-| Platform Engineer | `platformEngineer` | starTemplates, integrationLayer, starResource |
-| Tech Lead | `techLead` | starMetrics, starQuality, starOrganization, starGRC |
-| Security Engineer | `securityEngineer` | starSecurity, starGRC |
+Based on [Port.io End User Personas](https://docs.getport.io/) and IDP best practices:
+
+| Persona | Variable | Primary Capabilities | Port.io Alignment |
+|---------|----------|---------------------|--------------------|
+| Application Developer | `developer` | starTemplates, starCatalog, starVCS | Delivery View, Service Catalog, My Day |
+| Platform Engineer | `platformEngineer` | starTemplates, integrationLayer, starResource | Blueprints, Integrations, Governance |
+| Engineering Manager | `engineeringManager` | starMetrics, starQuality, starOrganization, starGRC | DORA Metrics, Scorecards, Team Delivery |
+| Site Reliability Engineer | `sre` | starCICD, starResource, starMetrics, starSecurity | SLOs, Incidents, Operations, Infrastructure |
+| Security Engineer | `securityEngineer` | starSecurity, starGRC | Vulnerabilities, Compliance, Secrets, Audit |
+| Technology Executive | `executive` | starMetrics, starGRC, starOrganization, starResource | Executive Dashboard, Costs, Strategic Initiatives |
 
 ### Element Kinds (from specification.c4)
 

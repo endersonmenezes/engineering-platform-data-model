@@ -11,20 +11,34 @@ model {
   // PERSONAS - Platform Engineering Actors
   // =========================================================================
   
+  // Developer: writes code, self-service environments, CI/CD pipelines
   developer = actor 'Developer' {
-    description 'Consumes platform services via self-service'
+    description 'Application developer who writes and ships code, uses self-service to provision environments, consumes CI/CD pipelines and focuses on business logic over infrastructure'
   }
   
+  // Platform Engineer: blueprints, templates, integrations, infrastructure, scorecards
   platformEngineer = actor 'Platform Engineer' {
-    description 'Maintains blueprints, templates and automations'
+    description 'Platform builder who creates blueprints and templates, configures integrations, manages infrastructure, enforces standards through scorecards and enables developer self-service'
   }
   
-  techLead = actor 'Tech Lead' {
-    description 'Tracks DORA metrics and scorecards'
+  // Engineering Manager: DORA metrics, team performance, delivery velocity, compliance
+  engineeringManager = actor 'Engineering Manager' {
+    description 'Team lead focused on delivery velocity, quality standards, DORA metrics, team scorecards, sprint progress and compliance oversight'
   }
   
+  // SRE: reliability, incidents, SLOs, deployments, runbooks, infrastructure health
+  sre = actor 'Site Reliability Engineer' {
+    description 'Operations expert focused on system reliability, incident management, SLOs, deployment workflows, runbooks and infrastructure health'
+  }
+  
+  // Security Engineer: vulnerabilities, secrets, compliance frameworks, audit trails
   securityEngineer = actor 'Security Engineer' {
-    description 'Monitors security posture and compliance'
+    description 'Security specialist responsible for vulnerability management, secrets lifecycle, compliance frameworks, policy enforcement and audit trails'
+  }
+  
+  // Executive: strategic metrics, costs, org-wide governance, ROI
+  executive = actor 'Technology Executive' {
+    description 'Leadership driving strategic decisions through org-wide metrics, cost management, compliance posture, team performance comparison and ROI analysis'
   }
 
   // =========================================================================
