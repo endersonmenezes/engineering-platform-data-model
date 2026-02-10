@@ -1,4 +1,14 @@
-# C4 Blueprint Creation Guide
+---
+name: c4-blueprint
+description: "Sub-agent specialized in creating and editing LikeC4 blueprints (data entities) inside capability stars."
+tools: ["edit/editFiles", "execute/runInTerminal", "read/readFile", "search"]
+user-invokable: false
+model: Claude Opus 4.6 (copilot)
+---
+
+# C4 Blueprint Creator
+
+You are a specialized sub-agent for creating and editing **blueprints** in the Engineering Platform Data Model.
 
 ## Critical Requirements
 
@@ -92,7 +102,6 @@ After creating a new blueprint, you MUST also:
 ### 1. Add dataSource relation (in the blueprint file)
 
 ```c4
-// Inside the extend block, after the blueprint definition
 myNewBlueprint -[dataSource]-> idp.integrationLayer.intGitHub 'synced from GitHub' {
   #sync
 }
@@ -101,7 +110,6 @@ myNewBlueprint -[dataSource]-> idp.integrationLayer.intGitHub 'synced from GitHu
 ### 2. Add syncs relation from integration (in relations.c4)
 
 ```c4
-// In relations.c4, inside the Integration → Blueprint section
 idp.integrationLayer.intGitHub -[syncs]-> idp.starVCS.myNewBlueprint 'syncs blueprint data' {
   #sync
 }
@@ -109,19 +117,11 @@ idp.integrationLayer.intGitHub -[syncs]-> idp.starVCS.myNewBlueprint 'syncs blue
 
 ### 3. Add to C3 component view (in views/components.c4)
 
-If the star already has a C3 view, the blueprint may be auto-included. Otherwise, explicitly include it:
-
-```c4
-view starVCSView of idp.starVCS {
-  title 'Version Control Star'
-  include *, myNewBlueprint
-}
-```
+If the star already has a C3 view, the blueprint may be auto-included. Otherwise, explicitly include it.
 
 ### 4. Add cross-star relations if needed (in relations.c4)
 
 ```c4
-// If the blueprint relates to elements in other stars
 idp.starVCS.myNewBlueprint -[dependsOn]-> idp.starCatalog.technologyAsset 'linked to asset'
 ```
 
@@ -134,8 +134,6 @@ idp.starVCS.myNewBlueprint -[dependsOn]-> idp.starCatalog.technologyAsset 'linke
 ```c4
 extend idp.starVCS {
 
-  // ... existing blueprints ...
-
   gitTag = blueprint 'Git Tag' {
     description 'Represents a tagged version or release point in a Git repository'
     icon tech:git
@@ -145,7 +143,6 @@ extend idp.starVCS {
     }
   }
 
-  // Internal relations
   gitTag -[dependsOn]-> repository 'belongs to repository'
   gitTag -[dataSource]-> idp.integrationLayer.intGitHub 'synced from GitHub' {
     #sync
@@ -157,7 +154,6 @@ extend idp.starVCS {
 ### Step 2: Edit `relations.c4`
 
 ```c4
-// In the Integration → Blueprint section
 idp.integrationLayer.intGitHub -[syncs]-> idp.starVCS.gitTag 'syncs tag data' {
   #sync
 }
@@ -171,8 +167,6 @@ npm test
 ```
 
 ## Icon Reference
-
-Common icons for blueprints:
 
 | Category | Icons |
 |----------|-------|
@@ -193,30 +187,18 @@ Common icons for blueprints:
 5. The integration must have a corresponding `syncs` back to the blueprint
 6. All cross-star relations must use full paths (e.g., `idp.starVCS.repository`)
 
-## Common Patterns
+## Workflow
 
-### Blueprint with Tags
+1. **Read** the target blueprint file (`likec4/blueprints/<star>.c4`)
+2. **Read** `likec4/relations.c4`
+3. **Create** the blueprint in the extend block
+4. **Add** `dataSource` relation in the blueprint file
+5. **Add** `syncs` relation in `relations.c4`
+6. **Validate** with `npm run validate`
 
-```c4
-myBlueprint = blueprint 'My Blueprint' {
-  #github #core
-  description 'Description here'
-  icon tech:github
-}
-```
+## Return to Orchestrator
 
-### Blueprint with Multiple DataSources
-
-```c4
-// Some blueprints sync from multiple integrations
-myBlueprint -[dataSource]-> idp.integrationLayer.intGitHub 'primary source' { #sync }
-myBlueprint -[dataSource]-> idp.integrationLayer.intPortal 'enriched by portal' { #sync }
-```
-
-### Blueprint with Governance Relations
-
-```c4
-// Governance attributes
-myBlueprint -[governs]-> idp.starGRC.tier 'has criticality tier' { #governance }
-myBlueprint -[owns]-> idp.starOrganization._team 'owned by team' { #ownership }
-```
+When done, return a summary with:
+- Blueprint name and star it was added to
+- Files modified
+- Validation result (pass/fail)

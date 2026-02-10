@@ -1,4 +1,14 @@
-# C4 Capability Star Creation Guide
+---
+name: c4-capability
+description: "Sub-agent specialized in creating and editing LikeC4 capability stars (top-level groupings of blueprints)."
+tools: ["edit/editFiles", "execute/runInTerminal", "read/readFile", "search"]
+user-invokable: false
+model: Claude Opus 4.6 (copilot)
+---
+
+# C4 Capability Star Creator
+
+You are a specialized sub-agent for creating and editing **capability stars** in the Engineering Platform Data Model.
 
 ## Critical Requirements
 
@@ -36,10 +46,7 @@ Add the new capability inside the `idp` system block:
 
 ```c4
 model {
-  // Inside the idp system...
   idp = system 'Internal Developer Portal' {
-    // ... existing stars ...
-
     starObservability = capability 'Observability' {
       description 'Monitoring, logging, tracing and alerting capabilities'
       icon bootstrap:binoculars
@@ -77,23 +84,8 @@ extend idp.starObservability {
     }
   }
 
-  metric = blueprint 'Metric' {
-    description 'Represents a metrics collection endpoint or dashboard'
-    icon bootstrap:graph-up
-    technology 'Prometheus / Grafana'
-    style {
-      color green
-    }
-  }
-
-  // Internal relations
-  metric -[dependsOn]-> logPipeline 'correlates with logs'
-
   // DataSource relations
   logPipeline -[dataSource]-> idp.integrationLayer.intObservability 'synced from monitoring stack' {
-    #sync
-  }
-  metric -[dataSource]-> idp.integrationLayer.intObservability 'synced from monitoring stack' {
     #sync
   }
 
@@ -105,17 +97,13 @@ extend idp.starObservability {
 If the star needs a new external system and/or integration:
 
 ```c4
-// Add external system (outside idp)
 grafana = externalSystem 'Grafana' {
   description 'Observability and monitoring platform'
   icon tech:grafana
 }
 
-// Add integration inside integrationLayer (inside idp)
 idp = system 'Internal Developer Portal' {
   integrationLayer = capability 'Integration Layer' {
-    // ... existing integrations ...
-
     intObservability = integration 'Observability Connector' {
       description 'Syncs monitoring data from Grafana/Prometheus'
       icon bootstrap:binoculars
@@ -127,88 +115,33 @@ idp = system 'Internal Developer Portal' {
 ### Step 4: Add relations in `relations.c4`
 
 ```c4
-// ================================================================
 // Actor → New Star
-// ================================================================
 idp.starObservability -> developer 'provides monitoring' {
   navigateTo developerMonitoring
 }
-idp.starObservability -> platformEngineer 'configures monitoring'
 
-// ================================================================
 // Integration ↔ External System
-// ================================================================
-idp.integrationLayer.intObservability -[syncs]-> grafana 'syncs from Grafana' {
-  #sync
-}
+idp.integrationLayer.intObservability -[syncs]-> grafana 'syncs from Grafana' { #sync }
 
-// ================================================================
 // Integration → Blueprints
-// ================================================================
-idp.integrationLayer.intObservability -[syncs]-> idp.starObservability.logPipeline 'syncs logs' {
-  #sync
-}
-idp.integrationLayer.intObservability -[syncs]-> idp.starObservability.metric 'syncs metrics' {
-  #sync
-}
-
-// ================================================================
-// Cross-star relations
-// ================================================================
-idp.starObservability.metric -[dependsOn]-> idp.starCatalog.technologyAsset 'monitors asset' {
-  #dataFlow
-}
+idp.integrationLayer.intObservability -[syncs]-> idp.starObservability.logPipeline 'syncs logs' { #sync }
 ```
 
 ### Step 5: Add C2 container view in `views/containers.c4`
 
-The star should appear in the C2 capability overview. If the view uses `include *`, it will be auto-included. Otherwise, explicitly add it:
-
-```c4
-// In the capabilities view
-view capabilities of idp {
-  include *, starObservability
-}
-```
+The star should appear in the C2 capability overview. If the view uses `include *`, it will be auto-included.
 
 ### Step 6: Add C3 component view in `views/components.c4`
-
-Create a new view for the star's internal blueprints:
 
 ```c4
 view starObservabilityView of idp.starObservability {
   title 'Observability Star'
   description 'Blueprints: logPipeline, metric, trace, alert'
-
   include *
-
-  style logPipeline {
-    color green
-  }
-  style metric {
-    color green
-  }
 }
 ```
 
 ### Step 7: (Optional) Add dynamic journey views in `views/journeys.c4`
-
-```c4
-dynamic view developerMonitoring {
-  title 'Developer: Monitoring & Alerting'
-  description 'Developer checks observability dashboards'
-
-  developer -> idp.starObservability 'checks monitoring dashboards' {
-    notes 'Developer navigates to observability section'
-  }
-  idp.starObservability -> idp.starObservability.metric 'views metrics' {
-    notes 'Prometheus metrics for the service'
-  }
-  idp.starObservability -> idp.starObservability.logPipeline 'views logs' {
-    notes 'Centralized log pipeline'
-  }
-}
-```
 
 ### Step 8: Validate
 
@@ -230,20 +163,24 @@ npm test
 - [ ] Blueprint → Integration dataSource in blueprint file
 - [ ] C2 container view updated in `views/containers.c4`
 - [ ] C3 component view added in `views/components.c4`
-- [ ] Dynamic journey views added (optional)
 - [ ] `npm run validate` passes
 - [ ] `npm test` passes
 
-## Adding Blueprints to an Existing Star
+## Workflow
 
-To add new blueprints to an **existing** star, see the **blueprint-creation.md** guide. The process is simpler since the star infrastructure already exists.
+1. **Read** `likec4/model.c4`
+2. **Read** `likec4/relations.c4`
+3. **Read** `likec4/views/containers.c4` and `components.c4`
+4. **Create** star in `model.c4`
+5. **Create** blueprint file in `likec4/blueprints/`
+6. **Add** relations in `relations.c4`
+7. **Update** views
+8. **Validate** with `npm run validate`
 
-## Editing a Capability Star
+## Return to Orchestrator
 
-To modify an existing star:
-
-1. **Rename**: Change variable name in `model.c4`, then update ALL references across `relations.c4`, blueprint files, and views
-2. **Change description/icon**: Edit directly in `model.c4`
-3. **Add blueprints**: See blueprint-creation.md
-4. **Remove blueprints**: Delete from blueprint file, remove all relations in `relations.c4`, remove from views
-5. **Always validate**: `npm run validate && npm test`
+When done, return a summary with:
+- Star name and variable
+- Blueprints created
+- Files created/modified
+- Validation result (pass/fail)
