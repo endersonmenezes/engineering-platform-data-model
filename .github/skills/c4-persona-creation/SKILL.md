@@ -1,20 +1,15 @@
 ---
-name: c4-persona
-description: "Sub-agent specialized in creating and editing LikeC4 personas (actors) that interact with the platform."
-tools: ["edit/editFiles", "execute/runInTerminal", "read/readFile", "search"]
-user-invokable: false
-model: Claude Opus 4.6 (copilot)
+name: c4-persona-creation
+description: Guide for creating and editing LikeC4 personas (actors) that interact with the platform. Use when asked to add, modify, or delete a persona/actor in the Engineering Platform Data Model.
 ---
 
-# C4 Persona Creator
-
-You are a specialized sub-agent for creating and editing **personas (actors)** in the Engineering Platform Data Model.
+# C4 Persona Creation
 
 ## Critical Requirements
 
-🚨 **ALWAYS read `likec4/model.c4` and `likec4/relations.c4` before creating or editing personas**
-🚨 **Personas require changes in 3+ files — follow ALL steps**
-🚨 **ALWAYS validate with `npm run validate` after changes**
+- ALWAYS read `likec4/model.c4` and `likec4/relations.c4` before creating or editing personas
+- Personas require changes in 3+ files — follow ALL steps
+- ALWAYS validate with `npm run validate` after changes
 
 ## Overview
 
@@ -130,18 +125,18 @@ npm test
 
 | Capability | Developer | Platform Eng | Tech Lead | Security Eng |
 |-----------|:---------:|:------------:|:---------:|:------------:|
-| starCatalog | ✅ | ⬜ | ✅ | ✅ |
-| starOrganization | ⬜ | ⬜ | ✅ | ⬜ |
-| starVCS | ✅ | ⬜ | ⬜ | ⬜ |
-| starCICD | ✅ | ✅ | ⬜ | ⬜ |
-| starResource | ⬜ | ✅ | ⬜ | ⬜ |
-| starArtifacts | ✅ | ⬜ | ⬜ | ⬜ |
-| starSecurity | ⬜ | ⬜ | ⬜ | ✅ |
-| starQuality | ⬜ | ⬜ | ✅ | ⬜ |
-| starMetrics | ⬜ | ⬜ | ✅ | ⬜ |
-| starTemplates | ✅ | ✅ | ⬜ | ⬜ |
-| starGRC | ⬜ | ⬜ | ✅ | ✅ |
-| integrationLayer | ⬜ | ✅ | ⬜ | ⬜ |
+| starCatalog | Yes | — | Yes | Yes |
+| starOrganization | — | — | Yes | — |
+| starVCS | Yes | — | — | — |
+| starCICD | Yes | Yes | — | — |
+| starResource | — | Yes | — | — |
+| starArtifacts | Yes | — | — | — |
+| starSecurity | — | — | — | Yes |
+| starQuality | — | — | Yes | — |
+| starMetrics | — | — | Yes | — |
+| starTemplates | Yes | Yes | — | — |
+| starGRC | — | — | Yes | Yes |
+| integrationLayer | — | Yes | — | — |
 
 ## Workflow
 
@@ -152,12 +147,3 @@ npm test
 5. **Add** capability relations in `relations.c4`
 6. **Create** journey views in `views/journeys.c4`
 7. **Validate** with `npm run validate`
-
-## Return to Orchestrator
-
-When done, return a summary with:
-- Persona name and variable
-- Capabilities assigned
-- Journey views created
-- Files modified
-- Validation result (pass/fail)

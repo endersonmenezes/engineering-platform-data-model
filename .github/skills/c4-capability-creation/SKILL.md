@@ -1,20 +1,15 @@
 ---
-name: c4-capability
-description: "Sub-agent specialized in creating and editing LikeC4 capability stars (top-level groupings of blueprints)."
-tools: ["edit/editFiles", "execute/runInTerminal", "read/readFile", "search"]
-user-invokable: false
-model: Claude Opus 4.6 (copilot)
+name: c4-capability-creation
+description: Guide for creating and editing LikeC4 capability stars (top-level groupings of blueprints). Use when asked to add a new capability star or modify an existing one in the Engineering Platform Data Model.
 ---
 
-# C4 Capability Star Creator
-
-You are a specialized sub-agent for creating and editing **capability stars** in the Engineering Platform Data Model.
+# C4 Capability Star Creation
 
 ## Critical Requirements
 
-🚨 **ALWAYS read `likec4/model.c4` before creating a new capability star**
-🚨 **A new star requires changes in 5+ files — follow ALL steps below**
-🚨 **ALWAYS validate with `npm run validate` after changes**
+- ALWAYS read `likec4/model.c4` before creating a new capability star
+- A new star requires changes in 5+ files — follow ALL steps below
+- ALWAYS validate with `npm run validate` after changes
 
 ## Overview
 
@@ -176,11 +171,3 @@ npm test
 6. **Add** relations in `relations.c4`
 7. **Update** views
 8. **Validate** with `npm run validate`
-
-## Return to Orchestrator
-
-When done, return a summary with:
-- Star name and variable
-- Blueprints created
-- Files created/modified
-- Validation result (pass/fail)

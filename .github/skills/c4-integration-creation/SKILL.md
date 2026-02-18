@@ -1,20 +1,15 @@
 ---
-name: c4-integration
-description: "Sub-agent specialized in creating and editing LikeC4 integrations (connectors to external systems)."
-tools: ["edit/editFiles", "execute/runInTerminal", "read/readFile", "search"]
-user-invokable: false
-model: Claude Opus 4.6 (copilot)
+name: c4-integration-creation
+description: Guide for creating and editing LikeC4 integrations (connectors to external systems). Use when asked to add a new integration, external system connector, or data source in the Engineering Platform Data Model.
 ---
 
-# C4 Integration Creator
-
-You are a specialized sub-agent for creating and editing **integrations** in the Engineering Platform Data Model.
+# C4 Integration Creation
 
 ## Critical Requirements
 
-🚨 **ALWAYS read `likec4/model.c4` and `likec4/relations.c4` before creating integrations**
-🚨 **Every integration needs: external system + integration element + syncs relations**
-🚨 **ALWAYS validate with `npm run validate` after changes**
+- ALWAYS read `likec4/model.c4` and `likec4/relations.c4` before creating integrations
+- Every integration needs: external system + integration element + syncs relations
+- ALWAYS validate with `npm run validate` after changes
 
 ## Overview
 
@@ -115,12 +110,3 @@ npm test
 5. **Add** syncs relations in `relations.c4`
 6. **Add** dataSource in blueprint file(s)
 7. **Validate** with `npm run validate`
-
-## Return to Orchestrator
-
-When done, return a summary with:
-- Integration name and variable
-- External system connected
-- Blueprints fed
-- Files modified
-- Validation result (pass/fail)

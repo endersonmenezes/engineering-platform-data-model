@@ -128,14 +128,14 @@ npm run export     # Export diagrams as images
 This repository is **AI First** with GitHub Copilot support:
 
 - **`.github/copilot-instructions.md`** — loaded automatically in every Copilot conversation
-- **`.github/agents/c4-architect.agent.md`** — specialized "C4 Platform Architect" custom agent
-- **`.github/agents/c4-prompts/`** — 9 structured guides for each operation type:
-  - `blueprint-creation.md` — creating/editing blueprints
-  - `capability-creation.md` — creating/editing capability stars
-  - `persona-creation.md` — creating/editing personas
-  - `relation-creation.md` — creating/editing relations
-  - `journey-creation.md` — creating/editing dynamic journey views
-  - `view-creation.md` — creating/editing C4 views
-  - `integration-creation.md` — creating/editing integrations
-  - `specification-creation.md` — editing element kinds, relationship kinds, tags
-  - `likec4-cli-instructions.md` — CLI validation and build commands
+- **`.github/agents/c4-architect.agent.md`** — "C4 Platform Architect" custom agent that analyzes, plans, and executes changes directly
+- **`.github/skills/`** — 9 [Agent Skills](https://agentskills.io/) loaded contextually by Copilot when relevant:
+  - `c4-blueprint-creation/` — creating/editing blueprints
+  - `c4-capability-creation/` — creating/editing capability stars
+  - `c4-persona-creation/` — creating/editing personas
+  - `c4-relation-creation/` — creating/editing relations
+  - `c4-journey-creation/` — creating/editing dynamic journey views
+  - `c4-view-creation/` — creating/editing C4 views
+  - `c4-integration-creation/` — creating/editing integrations
+  - `c4-specification-editing/` — editing element kinds, relationship kinds, tags
+  - `c4-validation/` — CLI validation and build commands

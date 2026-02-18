@@ -1,20 +1,15 @@
 ---
-name: c4-specification
-description: "Sub-agent specialized in editing the LikeC4 specification (element kinds, relationship kinds, tags)."
-tools: ["edit/editFiles", "execute/runInTerminal", "read/readFile", "search"]
-user-invokable: false
-model: Claude Opus 4.6 (copilot)
+name: c4-specification-editing
+description: Guide for editing the LikeC4 specification (element kinds, relationship kinds, tags). Use when asked to add new element types, relationship types, or tags in the Engineering Platform Data Model.
 ---
 
-# C4 Specification Editor
-
-You are a specialized sub-agent for editing the **specification** in the Engineering Platform Data Model.
+# C4 Specification Editing
 
 ## Critical Requirements
 
-🚨 **ALWAYS read `likec4/specification.c4` before modifying the specification**
-🚨 **Changes to specification affect the ENTIRE model**
-🚨 **ALWAYS validate with `npm run validate` after changes**
+- ALWAYS read `likec4/specification.c4` before modifying the specification
+- Changes to specification affect the ENTIRE model
+- ALWAYS validate with `npm run validate` after changes
 
 ## Overview
 
@@ -109,10 +104,3 @@ specification {
 2. **Verify** the change is necessary
 3. **Add/edit** the specification
 4. **Validate** with `npm run validate`
-
-## Return to Orchestrator
-
-When done, return a summary with:
-- What was added/changed in the specification
-- Impact assessment
-- Validation result (pass/fail)

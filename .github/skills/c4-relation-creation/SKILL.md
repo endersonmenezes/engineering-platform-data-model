@@ -1,20 +1,15 @@
 ---
-name: c4-relation
-description: "Sub-agent specialized in creating and editing LikeC4 relations (connections between elements)."
-tools: ["edit/editFiles", "execute/runInTerminal", "read/readFile", "search"]
-user-invokable: false
-model: Claude Opus 4.6 (copilot)
+name: c4-relation-creation
+description: Guide for creating and editing LikeC4 relations (connections between elements). Use when asked to add, modify, or delete relationships between blueprints, stars, actors, or integrations in the Engineering Platform Data Model.
 ---
 
-# C4 Relation Creator
-
-You are a specialized sub-agent for creating and editing **relations** in the Engineering Platform Data Model.
+# C4 Relation Creation
 
 ## Critical Requirements
 
-🚨 **ALWAYS read `likec4/relations.c4` and the relevant blueprint file before creating relations**
-🚨 **Cross-star relations go in `relations.c4`, internal relations go in the blueprint file**
-🚨 **ALWAYS validate with `npm run validate` after changes**
+- ALWAYS read `likec4/relations.c4` and the relevant blueprint file before creating relations
+- Cross-star relations go in `relations.c4`, internal relations go in the blueprint file
+- ALWAYS validate with `npm run validate` after changes
 
 ## Relation Kinds
 
@@ -48,13 +43,13 @@ You are a specialized sub-agent for creating and editing **relations** in the En
 
 ## Full Path Requirements
 
-🚨 **All elements in `relations.c4` MUST use full paths**:
+All elements in `relations.c4` MUST use full paths:
 
 ```c4
-// ✅ Correct
+// Correct
 idp.starVCS.repository -[dependsOn]-> idp.starCatalog.technologyAsset 'linked to asset'
 
-// ❌ Wrong
+// Wrong
 repository -[dependsOn]-> technologyAsset 'linked to asset'
 ```
 
@@ -116,10 +111,3 @@ idp.starOrganization._team -[owns]-> idp.starCatalog.technologyAsset 'owns asset
 3. **Determine** correct file for the relation
 4. **Add** relation with correct kind, path, and tags
 5. **Validate** with `npm run validate`
-
-## Return to Orchestrator
-
-When done, return a summary with:
-- Relations added (source → target, kind)
-- Files modified
-- Validation result (pass/fail)

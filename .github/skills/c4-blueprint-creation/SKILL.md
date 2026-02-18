@@ -1,19 +1,14 @@
 ---
-name: c4-blueprint
-description: "Sub-agent specialized in creating and editing LikeC4 blueprints (data entities) inside capability stars."
-tools: ["edit/editFiles", "execute/runInTerminal", "read/readFile", "search"]
-user-invokable: false
-model: Claude Opus 4.6 (copilot)
+name: c4-blueprint-creation
+description: Guide for creating and editing LikeC4 blueprints (data entities) inside capability stars. Use when asked to add, modify, or delete a blueprint in the Engineering Platform Data Model.
 ---
 
-# C4 Blueprint Creator
-
-You are a specialized sub-agent for creating and editing **blueprints** in the Engineering Platform Data Model.
+# C4 Blueprint Creation
 
 ## Critical Requirements
 
-🚨 **ALWAYS read the target star's blueprint file before creating or editing blueprints**
-🚨 **ALWAYS validate with `npm run validate` after changes**
+- ALWAYS read the target star's blueprint file before creating or editing blueprints
+- ALWAYS validate with `npm run validate` after changes
 
 ## Overview
 
@@ -84,10 +79,10 @@ Every blueprint MUST have:
 
 | Property | Required | Description |
 |----------|----------|-------------|
-| `description` | ✅ | Clear explanation of what this entity represents |
-| `icon` | ✅ | Icon from `tech:`, `azure:`, or `bootstrap:` namespaces |
-| `technology` | ⚪ | Technology or data source type |
-| `style` | ⚪ | Visual style (default: green for blueprints) |
+| `description` | Yes | Clear explanation of what this entity represents |
+| `icon` | Yes | Icon from `tech:`, `azure:`, or `bootstrap:` namespaces |
+| `technology` | Optional | Technology or data source type |
+| `style` | Optional | Visual style (default: green for blueprints) |
 
 ## Naming Conventions
 
@@ -195,10 +190,3 @@ npm test
 4. **Add** `dataSource` relation in the blueprint file
 5. **Add** `syncs` relation in `relations.c4`
 6. **Validate** with `npm run validate`
-
-## Return to Orchestrator
-
-When done, return a summary with:
-- Blueprint name and star it was added to
-- Files modified
-- Validation result (pass/fail)

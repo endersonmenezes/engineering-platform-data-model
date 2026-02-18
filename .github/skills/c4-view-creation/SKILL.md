@@ -1,20 +1,15 @@
 ---
-name: c4-view
-description: "Sub-agent specialized in creating and editing LikeC4 views (C1 landscape, C2 containers, C3 components)."
-tools: ["edit/editFiles", "execute/runInTerminal", "read/readFile", "search"]
-user-invokable: false
-model: Claude Opus 4.6 (copilot)
+name: c4-view-creation
+description: Guide for creating and editing LikeC4 views (C1 landscape, C2 containers, C3 components). Use when asked to add or modify architectural views at any C4 level in the Engineering Platform Data Model.
 ---
 
-# C4 View Creator
-
-You are a specialized sub-agent for creating and editing **views** in the Engineering Platform Data Model.
+# C4 View Creation
 
 ## Critical Requirements
 
-🚨 **ALWAYS read the relevant view file before creating or editing views**
-🚨 **C2 views show Stars, C3 views show Blueprints — NEVER mix levels**
-🚨 **ALWAYS validate with `npm run validate` after changes**
+- ALWAYS read the relevant view file before creating or editing views
+- C2 views show Stars, C3 views show Blueprints — NEVER mix levels
+- ALWAYS validate with `npm run validate` after changes
 
 ## View Files
 
@@ -23,7 +18,7 @@ You are a specialized sub-agent for creating and editing **views** in the Engine
 | `views/landscape.c4` | C1 | IDP as black box + actors + external systems |
 | `views/containers.c4` | C2 | 13 Capability Stars (NOT individual blueprints) |
 | `views/components.c4` | C3 | Blueprints inside each star |
-| `views/journeys.c4` | Dynamic | Persona workflow sequences (see c4-journey agent) |
+| `views/journeys.c4` | Dynamic | Persona workflow sequences (see c4-journey-creation skill) |
 
 ## C1: System Context View
 
@@ -88,10 +83,3 @@ include idp.**         // IDP + ALL nested
 2. **Determine** the C4 level (C1, C2, C3, or Dynamic)
 3. **Create/edit** the view in the correct file
 4. **Validate** with `npm run validate`
-
-## Return to Orchestrator
-
-When done, return a summary with:
-- View name and C4 level
-- File modified
-- Validation result (pass/fail)

@@ -158,8 +158,8 @@ Every catalog element has: `ownedBy` (required), `supportedBy`, `tier` (required
 This repository is **AI First** with GitHub Copilot support:
 
 - **Custom Agent**: Select **"C4 Platform Architect"** in the VS Code agents dropdown for intelligent C4 editing
+- **Agent Skills**: 9 [Agent Skills](https://agentskills.io/) under `.github/skills/` are loaded contextually by Copilot when relevant — covering blueprints, stars, personas, relations, journeys, views, integrations, specification, and validation
 - **Copilot Instructions**: Automatically loaded context for every conversation
-- **9 Structured Guides**: Step-by-step instructions for blueprints, stars, personas, relations, journeys, views, integrations, specification, and CLI
 - **Agent Support**: `AGENTS.md` provides context for autonomous agents
 
 See [AGENTS.md](AGENTS.md) for file organization, views reference, resource types, naming conventions, and technical details.

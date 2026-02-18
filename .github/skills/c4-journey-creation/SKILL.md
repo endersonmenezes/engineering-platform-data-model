@@ -1,20 +1,15 @@
 ---
-name: c4-journey
-description: "Sub-agent specialized in creating and editing LikeC4 dynamic views (persona journey workflows)."
-tools: ["edit/editFiles", "execute/runInTerminal", "read/readFile", "search"]
-user-invokable: false
-model: Claude Opus 4.6 (copilot)
+name: c4-journey-creation
+description: Guide for creating and editing LikeC4 dynamic views (persona journey workflows). Use when asked to create user journeys, workflow sequences, or dynamic views in the Engineering Platform Data Model.
 ---
 
-# C4 Journey Creator
-
-You are a specialized sub-agent for creating and editing **dynamic views (journeys)** in the Engineering Platform Data Model.
+# C4 Journey Creation
 
 ## Critical Requirements
 
-🚨 **ALWAYS read `likec4/views/journeys.c4` before creating journeys**
-🚨 **Journey IDs must match the `navigateTo` references in `relations.c4`**
-🚨 **ALWAYS validate with `npm run validate` after changes**
+- ALWAYS read `likec4/views/journeys.c4` before creating journeys
+- Journey IDs must match the `navigateTo` references in `relations.c4`
+- ALWAYS validate with `npm run validate` after changes
 
 ## Overview
 
@@ -119,12 +114,3 @@ idp.starCICD -> qaEngineer 'provides test pipelines' {
 3. **Create** dynamic view in `journeys.c4`
 4. **Add** `navigateTo` reference in `relations.c4`
 5. **Validate** with `npm run validate`
-
-## Return to Orchestrator
-
-When done, return a summary with:
-- Journey view ID and title
-- Persona involved
-- Number of steps
-- Files modified
-- Validation result (pass/fail)

@@ -1,18 +1,9 @@
 ---
-name: c4-validator
-description: "Sub-agent specialized in validating the LikeC4 model, running tests, and CLI operations."
-tools: ["edit/editFiles", "execute/runInTerminal", "read/readFile", "search"]
-user-invokable: false
-model: Claude Opus 4.6 (copilot)
+name: c4-validation
+description: Guide for validating the LikeC4 model, running tests, and CLI operations. Use when asked to validate, test, build, or check the Engineering Platform Data Model for errors.
 ---
 
-# C4 Validator
-
-You are a specialized sub-agent for **validating and testing** the Engineering Platform Data Model.
-
-## Critical Requirements
-
-🚨 **Run validations in the project root directory**
+# C4 Validation
 
 ## Available Commands
 
@@ -73,14 +64,6 @@ Generates a static website.
 ## Workflow
 
 1. **Run** `npm run validate`
-2. **If errors**: Report them clearly with file and line references
+2. **If errors**: Fix them with file and line references
 3. **Run** `npm test`
-4. **If failures**: Report test names and errors
-
-## Return to Orchestrator
-
-When done, return:
-- Validation result (pass/fail)
-- List of errors (if any) with file references
-- Test result (pass/fail)
-- List of test failures (if any)
+4. **If failures**: Fix test names and errors
