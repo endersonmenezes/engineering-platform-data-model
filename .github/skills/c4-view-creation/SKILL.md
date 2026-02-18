@@ -17,7 +17,7 @@ description: Guide for creating and editing LikeC4 views (C1 landscape, C2 conta
 |------|-------|---------|
 | `views/landscape.c4` | C1 | IDP as black box + actors + external systems |
 | `views/containers.c4` | C2 | 13 Capability Stars (NOT individual blueprints) |
-| `views/components.c4` | C3 | Blueprints inside each star |
+| `views/c3/<star>.c4` | C3 | Blueprints inside each star (one file per star) |
 | `views/journeys.c4` | Dynamic | Persona workflow sequences (see c4-journey-creation skill) |
 
 ## C1: System Context View
@@ -35,7 +35,24 @@ Shows the 13 Capability Stars inside the IDP.
 
 ## C3: Component View
 
-Shows the blueprints inside ONE specific star.
+Shows the blueprints inside ONE specific star. Each star has its own file under `views/c3/`.
+
+| Star | File |
+|------|------|
+| Service Catalog | `views/c3/catalog.c4` |
+| Organization | `views/c3/organization.c4` |
+| Version Control | `views/c3/vcs.c4` |
+| CI/CD Platform | `views/c3/cicd.c4` |
+| Resource Catalog | `views/c3/resource.c4` |
+| Artifact Management | `views/c3/artifacts.c4` |
+| Security | `views/c3/security.c4` |
+| Software Quality | `views/c3/quality.c4` |
+| Engineering Metrics | `views/c3/metrics.c4` |
+| Feature Management | `views/c3/features.c4` |
+| Software Templates | `views/c3/templates.c4` |
+| GRC | `views/c3/grc.c4` |
+| Database Management | `views/c3/database.c4` |
+| Multi-Cloud Detail | `views/c3/multicloud.c4` |
 
 ```c4
 view starVCSView of idp.starVCS {
@@ -46,7 +63,7 @@ view starVCSView of idp.starVCS {
 }
 ```
 
-- One view per star
+- One view per star, one file per star
 - `of idp.starXxx` scopes the view to that star
 - Audience: Developers
 

@@ -9,25 +9,12 @@ model {
       #selfservice
       description 'Template for component scaffolding'
       icon bootstrap:file-earmark-code-fill
-      
-      // Cross-Star Relations
-      this -[owns]-> idp.starOrganization._team 'ownedBy' { #ownership }
-      this -[dataSource]-> idp.integrationLayer.intPortal { #dataFlow }
     }
     
     scaffoldedEntity = blueprint 'scaffoldedEntity' {
       description 'Entity created from template'
       icon bootstrap:file-earmark-plus-fill
-      
-      // Cross-Star Relations
-      this -[produces]-> idp.starVCS.repository 'createsRepo'
-      this -[produces]-> idp.starCatalog.technologyAsset 'registersAsset'
-      this -[dataSource]-> idp.integrationLayer.intPortal { #dataFlow }
     }
-    
-    // Internal Relations (kinded)
-    template -[produces]-> scaffoldedEntity 'generates'
-    scaffoldedEntity -[dependsOn]-> template 'createdFrom'
     
   }
 }

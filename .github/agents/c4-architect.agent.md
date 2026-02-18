@@ -1,6 +1,6 @@
 ---
 description: "C4 Platform Architect for the Engineering Platform Data Model. Analyzes requests, plans changes, and executes them using LikeC4 DSL. Loads agent skills for specialized guidance on blueprints, capabilities, personas, relations, journeys, views, integrations, specification, and validation."
-tools: ["edit/editFiles", "execute/runInTerminal", "read/readFile", "search"]
+tools: [vscode/extensions, vscode/runCommand, vscode/askQuestions, vscode/vscodeAPI, execute/getTerminalOutput, execute/awaitTerminal, execute/killTerminal, execute/createAndRunTask, execute/runTests, execute/runInTerminal, execute/testFailure, read/terminalSelection, read/terminalLastCommand, read/getNotebookSummary, read/problems, read/readFile, read/readNotebookCellOutput, agent/runSubagent, edit/createDirectory, edit/createFile, edit/editFiles, search/changes, search/codebase, search/fileSearch, search/listDirectory, search/searchResults, search/textSearch, search/usages, web/fetch, github/add_comment_to_pending_review, github/add_issue_comment, github/assign_copilot_to_issue, github/create_branch, github/create_or_update_file, github/create_pull_request, github/create_repository, github/delete_file, github/fork_repository, github/get_commit, github/get_file_contents, github/get_label, github/get_latest_release, github/get_me, github/get_release_by_tag, github/get_tag, github/get_team_members, github/get_teams, github/issue_read, github/issue_write, github/list_branches, github/list_commits, github/list_issue_types, github/list_issues, github/list_pull_requests, github/list_releases, github/list_tags, github/merge_pull_request, github/pull_request_read, github/pull_request_review_write, github/push_files, github/request_copilot_review, github/search_code, github/search_issues, github/search_pull_requests, github/search_repositories, github/search_users, github/sub_issue_write, github/update_pull_request, github/update_pull_request_branch, likec4/find-relationships, likec4/list-projects, likec4/read-deployment, likec4/read-element, likec4/read-project-summary, likec4/read-view, likec4/search-element, todo]
 ---
 
 # C4 Platform Architect
@@ -35,7 +35,7 @@ Read the user's request and determine which operations are needed. Gather contex
 - **Model**: `likec4/model.c4`
 - **Relations**: `likec4/relations.c4`
 - **Blueprints**: `likec4/blueprints/<star>.c4`
-- **Views**: `likec4/views/landscape.c4`, `containers.c4`, `components.c4`, `journeys.c4`
+- **Views**: `likec4/views/landscape.c4`, `containers.c4`, `c3/<star>.c4`, `journeys.c4`
 
 ### 2. Plan the Execution
 
@@ -87,7 +87,7 @@ Summarize what was created/changed, which files were modified, and validation st
 ## Current Model State
 
 ### 13 Capability Stars
-Service Catalog (`starCatalog`), Organization (`starOrganization`), Version Control (`starVCS`), CI/CD Platform (`starCICD`), Resource Catalog (`starResource`), Artifact Management (`starArtifacts`), Security (`starSecurity`), Code Quality (`starQuality`), Engineering Metrics (`starMetrics`), Feature Management (`starFeatures`), Software Templates (`starTemplates`), GRC (`starGRC`), Database Management (`starDatabase`)
+Service Catalog (`starCatalog`), Organization (`starOrganization`), Version Control (`starVCS`), CI/CD Platform (`starCICD`), Resource Catalog (`starResource`), Artifact Management (`starArtifacts`), Security (`starSecurity`), Software Quality (`starQuality`), Engineering Metrics (`starMetrics`), Feature Management (`starFeatures`), Software Templates (`starTemplates`), GRC (`starGRC`), Database Management (`starDatabase`)
 
 ### 4 Personas
 Developer (`developer`), Platform Engineer (`platformEngineer`), Tech Lead (`techLead`), Security Engineer (`securityEngineer`)
@@ -109,7 +109,7 @@ GitHub (`github`), OCI (`oci`), Azure (`azure`), Entra ID (`entraId`), SonarQube
    - Create `logPipeline` and `metric` blueprints in `blueprints/observability.c4`
    - Create `intObservability` integration in `model.c4` (if needed)
    - Add dataSource, syncs, and actor→star relations in `relations.c4`
-   - Add C3 component view in `views/components.c4`
+   - Create C3 component view file in `views/c3/<star-name>.c4`
 4. **Validate**: `npm run validate && npm test`
 5. **Report**: Summary of all changes
 

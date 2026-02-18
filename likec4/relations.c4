@@ -271,6 +271,17 @@ model {
   idp.integrationLayer.intQuality -[syncs]-> idp.starQuality.testCoverage 'measures coverage' {
     #sync #dataFlow
   }
+  idp.integrationLayer.intQuality -[syncs]-> idp.starQuality.technicalDebt 'detects debt from code' {
+    #sync #dataFlow
+  }
+  
+  // Portal Native -> Quality blueprints (manual reports and debt)
+  idp.integrationLayer.intPortal -[syncs]-> idp.starQuality.report 'receives reports' {
+    #sync #dataFlow
+  }
+  idp.integrationLayer.intPortal -[syncs]-> idp.starQuality.technicalDebt 'receives manual debt' {
+    #sync #dataFlow
+  }
   
   // Feature Flags -> Feature blueprints
   idp.integrationLayer.intFeatureFlags -[syncs]-> idp.starFeatures.featureFlag 'manages flags' {
@@ -297,5 +308,220 @@ model {
   idp.integrationLayer.intMetrics -[syncs]-> idp.starMetrics.copilotMetrics 'aggregates AI metrics' {
     #sync #dataFlow #metrics
   }
+
+  // ==========================================================================
+  // BLUEPRINTS -> INTEGRATIONS (dataSource)
+  // ==========================================================================
+  
+  // Service Catalog -> Portal
+  idp.starCatalog.technologyAsset -[dataSource]-> idp.integrationLayer.intPortal 'cataloged in Portal' { #dataFlow }
+  idp.starCatalog.domain -[dataSource]-> idp.integrationLayer.intPortal 'cataloged in Portal' { #dataFlow }
+  idp.starCatalog.system -[dataSource]-> idp.integrationLayer.intPortal 'cataloged in Portal' { #dataFlow }
+  idp.starCatalog.api -[dataSource]-> idp.integrationLayer.intPortal 'cataloged in Portal' { #dataFlow }
+  
+  // Organization -> Portal & GitHub
+  idp.starOrganization._team -[dataSource]-> idp.integrationLayer.intPortal 'managed in Portal' { #dataFlow }
+  idp.starOrganization._user -[dataSource]-> idp.integrationLayer.intPortal 'managed in Portal' { #dataFlow }
+  idp.starOrganization.group -[dataSource]-> idp.integrationLayer.intPortal 'managed in Portal' { #dataFlow }
+  idp.starOrganization.githubUser -[dataSource]-> idp.integrationLayer.intGitHub 'synced from GitHub' { #dataFlow #sync }
+  idp.starOrganization.githubOrganization -[dataSource]-> idp.integrationLayer.intGitHub 'synced from GitHub' { #dataFlow #sync }
+  
+  // Version Control -> GitHub
+  idp.starVCS.repository -[dataSource]-> idp.integrationLayer.intGitHub 'synced from GitHub' { #dataFlow #sync }
+  idp.starVCS.pullRequest -[dataSource]-> idp.integrationLayer.intGitHub 'synced from GitHub' { #dataFlow #sync }
+  idp.starVCS.branch -[dataSource]-> idp.integrationLayer.intGitHub 'synced from GitHub' { #dataFlow #sync }
+  
+  // CI/CD -> GitHub Actions
+  idp.starCICD.ciPipeline -[dataSource]-> idp.integrationLayer.intGitHub 'synced from GitHub Actions' { #dataFlow }
+  idp.starCICD.pipelineRun -[dataSource]-> idp.integrationLayer.intGitHub 'synced from GitHub Actions' { #dataFlow }
+  idp.starCICD.deployment -[dataSource]-> idp.integrationLayer.intGitHub 'synced from GitHub Actions' { #dataFlow }
+  idp.starCICD.environment -[dataSource]-> idp.integrationLayer.intGitHub 'synced from GitHub Actions' { #dataFlow }
+  
+  // Security -> GHAS, Key Vault, Entra ID
+  idp.starSecurity.securityScorecard -[dataSource]-> idp.integrationLayer.intSecurity 'scored by GHAS' { #dataFlow }
+  idp.starSecurity.securityAlert -[dataSource]-> idp.integrationLayer.intSecurity 'detected by GHAS' { #dataFlow }
+  idp.starSecurity.secretVault -[dataSource]-> idp.integrationLayer.intSecrets 'managed by Key Vault' { #dataFlow }
+  idp.starSecurity.identity -[dataSource]-> idp.integrationLayer.intIdentity 'provided by Entra ID' { #dataFlow }
+  
+  // Software Quality -> SonarQube & Portal
+  idp.starQuality.codeQuality -[dataSource]-> idp.integrationLayer.intQuality 'analyzed by SonarQube' { #dataFlow }
+  idp.starQuality.testCoverage -[dataSource]-> idp.integrationLayer.intQuality 'measured by SonarQube' { #dataFlow }
+  idp.starQuality.technicalDebt -[dataSource]-> idp.integrationLayer.intQuality 'detected by SonarQube' { #dataFlow }
+  idp.starQuality.technicalDebt -[dataSource]-> idp.integrationLayer.intPortal 'registered via Portal' { #dataFlow }
+  idp.starQuality.report -[dataSource]-> idp.integrationLayer.intPortal 'created in Portal' { #dataFlow }
+  
+  // Engineering Metrics -> LinearB & GitHub
+  idp.starMetrics.engineeringMetrics -[dataSource]-> idp.integrationLayer.intMetrics 'aggregated by LinearB' { #dataFlow }
+  idp.starMetrics.copilotMetrics -[dataSource]-> idp.integrationLayer.intGitHub 'collected from GitHub Copilot API' { #dataFlow }
+  
+  // Feature Management -> Unleash
+  idp.starFeatures.featureFlag -[dataSource]-> idp.integrationLayer.intFeatureFlags 'managed by Unleash' { #dataFlow }
+  idp.starFeatures.flagStrategy -[dataSource]-> idp.integrationLayer.intFeatureFlags 'configured in Unleash' { #dataFlow }
+  
+  // Artifact Management -> Registry
+  idp.starArtifacts.artifact -[dataSource]-> idp.integrationLayer.intRegistry 'published to registry' { #dataFlow }
+  idp.starArtifacts.containerImage -[dataSource]-> idp.integrationLayer.intRegistry 'pushed to registry' { #dataFlow }
+  
+  // Resource Catalog -> Cloud Providers
+  idp.starResource.ociResource -[dataSource]-> idp.integrationLayer.intCloud.intOCI 'synced from OCI' { #dataFlow }
+  idp.starResource.azureResource -[dataSource]-> idp.integrationLayer.intCloud.intAzure 'synced from Azure' { #dataFlow }
+  
+  // Software Templates -> Portal
+  idp.starTemplates.template -[dataSource]-> idp.integrationLayer.intPortal 'managed in Portal' { #dataFlow }
+  idp.starTemplates.scaffoldedEntity -[dataSource]-> idp.integrationLayer.intPortal 'tracked in Portal' { #dataFlow }
+  
+  // Database Management -> Liquibase
+  idp.starDatabase.databaseSchema -[dataSource]-> idp.integrationLayer.intMigration 'tracked by Liquibase' { #dataFlow }
+  idp.starDatabase.migration -[dataSource]-> idp.integrationLayer.intMigration 'executed by Liquibase' { #dataFlow }
+  
+  // GRC -> Portal
+  idp.starGRC.tier -[dataSource]-> idp.integrationLayer.intPortal 'defined in Portal' { #dataFlow }
+  idp.starGRC.dataClassification -[dataSource]-> idp.integrationLayer.intPortal 'defined in Portal' { #dataFlow }
+  idp.starGRC.lifecycleState -[dataSource]-> idp.integrationLayer.intPortal 'defined in Portal' { #dataFlow }
+  idp.starGRC.complianceRequirement -[dataSource]-> idp.integrationLayer.intPortal 'managed in Portal' { #dataFlow }
+  idp.starGRC.complianceEvidence -[dataSource]-> idp.integrationLayer.intPortal 'submitted via Portal' { #dataFlow }
+  idp.starGRC.policy -[dataSource]-> idp.integrationLayer.intPortal 'enforced via Portal' { #dataFlow }
+  idp.starGRC.policyException -[dataSource]-> idp.integrationLayer.intPortal 'approved in Portal' { #dataFlow }
+  idp.starGRC.auditRecord -[dataSource]-> idp.integrationLayer.intPortal 'logged in Portal' { #dataFlow }
+
+  // ==========================================================================
+  // INTERNAL STAR RELATIONS
+  // ==========================================================================
+  
+  // Service Catalog
+  idp.starCatalog.domain -[includes]-> idp.starCatalog.system 'containsSystem'
+  idp.starCatalog.system -[includes]-> idp.starCatalog.technologyAsset 'containsAsset'
+  idp.starCatalog.technologyAsset -[produces]-> idp.starCatalog.api 'exposesAPI'
+  idp.starCatalog.technologyAsset -[dependsOn]-> idp.starCatalog.system 'partOfSystem'
+  idp.starCatalog.system -[dependsOn]-> idp.starCatalog.domain 'partOfDomain'
+  idp.starCatalog.api -[dependsOn]-> idp.starCatalog.technologyAsset 'exposedBy'
+  
+  // Organization
+  idp.starOrganization._user -[dependsOn]-> idp.starOrganization._team 'memberOf'
+  idp.starOrganization._team -[dependsOn]-> idp.starOrganization.group 'partOf'
+  idp.starOrganization.group -[includes]-> idp.starOrganization._team 'contains'
+  idp.starOrganization._user -[dependsOn]-> idp.starOrganization.githubUser 'hasGitHubIdentity'
+  idp.starOrganization._team -[dependsOn]-> idp.starOrganization.githubOrganization 'belongsTo'
+  idp.starOrganization.group -[dependsOn]-> idp.starOrganization.githubOrganization 'managedIn'
+  idp.starOrganization.githubOrganization -[includes]-> idp.starOrganization.githubUser 'hasMembers'
+  
+  // Version Control
+  idp.starVCS.repository -[includes]-> idp.starVCS.branch 'hasBranch'
+  idp.starVCS.repository -[includes]-> idp.starVCS.pullRequest 'hasPullRequest'
+  idp.starVCS.branch -[produces]-> idp.starVCS.pullRequest 'createsPR'
+  idp.starVCS.pullRequest -[dependsOn]-> idp.starVCS.branch 'targets'
+  
+  // CI/CD Platform
+  idp.starCICD.ciPipeline -[triggers]-> idp.starCICD.pipelineRun 'executes'
+  idp.starCICD.ciPipeline -[triggers]-> idp.starCICD.deployment 'triggersDeploy'
+  idp.starCICD.pipelineRun -[produces]-> idp.starCICD.deployment 'producesDeploy'
+  idp.starCICD.deployment -[deploys]-> idp.starCICD.environment 'targetsEnv'
+  idp.starCICD.environment -[includes]-> idp.starCICD.deployment 'hasDeployment'
+  
+  // Security
+  idp.starSecurity.securityScorecard -[includes]-> idp.starSecurity.securityAlert 'aggregatesAlerts'
+  idp.starSecurity.secretVault -[authenticates]-> idp.starSecurity.identity 'usesIdentity'
+  
+  // Software Quality
+  idp.starQuality.codeQuality -[includes]-> idp.starQuality.testCoverage 'hasCoverage'
+  idp.starQuality.codeQuality -[produces]-> idp.starQuality.technicalDebt 'detects debt'
+  idp.starQuality.report -[produces]-> idp.starQuality.technicalDebt 'reports debt'
+  
+  // Engineering Metrics
+  idp.starMetrics.engineeringMetrics -[includes]-> idp.starMetrics.copilotMetrics 'includesAI'
+  
+  // Feature Management
+  idp.starFeatures.featureFlag -[includes]-> idp.starFeatures.flagStrategy 'hasStrategy'
+  
+  // Artifact Management
+  idp.starArtifacts.artifact -[includes]-> idp.starArtifacts.containerImage 'includesImage'
+  
+  // Resource Catalog
+  idp.starResource.resource -[includes]-> idp.starResource.ociResource 'implementedBy'
+  idp.starResource.resource -[includes]-> idp.starResource.azureResource 'implementedBy'
+  idp.starResource.ociResource -[dependsOn]-> idp.starResource.resource 'implements'
+  idp.starResource.azureResource -[dependsOn]-> idp.starResource.resource 'implements'
+  
+  // Software Templates
+  idp.starTemplates.template -[produces]-> idp.starTemplates.scaffoldedEntity 'generates'
+  idp.starTemplates.scaffoldedEntity -[dependsOn]-> idp.starTemplates.template 'createdFrom'
+  
+  // Database Management
+  idp.starDatabase.databaseSchema -[includes]-> idp.starDatabase.migration 'hasMigration'
+  
+  // GRC
+  idp.starGRC.complianceRequirement -[includes]-> idp.starGRC.complianceEvidence 'requiresEvidence'
+  idp.starGRC.complianceEvidence -[produces]-> idp.starGRC.auditRecord 'generates'
+  idp.starGRC.policy -[includes]-> idp.starGRC.policyException 'hasException'
+  idp.starGRC.policyException -[produces]-> idp.starGRC.auditRecord 'loggedIn'
+  idp.starGRC.lifecycleState -[governs]-> idp.starGRC.complianceRequirement 'affectedBy' { #governance }
+
+  // ==========================================================================
+  // CROSS-STAR RELATIONS
+  // ==========================================================================
+  
+  // Service Catalog cross-star
+  idp.starCatalog.technologyAsset -[owns]-> idp.starOrganization._team 'ownedBy' { #ownership }
+  idp.starCatalog.technologyAsset -[owns]-> idp.starOrganization._team 'supportedBy' { #ownership }
+  idp.starCatalog.technologyAsset -[dependsOn]-> idp.starVCS.repository 'usesRepo'
+  idp.starCatalog.technologyAsset -[dependsOn]-> idp.starResource.resource 'dependsOn'
+  idp.starCatalog.technologyAsset -[deploys]-> idp.starCICD.environment 'deployedTo'
+  idp.starCatalog.technologyAsset -[dependsOn]-> idp.starSecurity.secretVault 'usesSecrets'
+  idp.starCatalog.technologyAsset -[authenticates]-> idp.starSecurity.identity 'usesIdentity'
+  idp.starCatalog.technologyAsset -[dependsOn]-> idp.starFeatures.featureFlag 'hasFlag'
+  idp.starCatalog.technologyAsset -[dependsOn]-> idp.starDatabase.databaseSchema 'hasSchema'
+  idp.starCatalog.technologyAsset -[dependsOn]-> idp.starTemplates.template 'createdFrom'
+  idp.starCatalog.technologyAsset -[governs]-> idp.starGRC.tier 'hasTier' { #governance }
+  idp.starCatalog.technologyAsset -[governs]-> idp.starGRC.dataClassification 'hasClassification' { #governance }
+  idp.starCatalog.technologyAsset -[governs]-> idp.starGRC.lifecycleState 'hasLifecycle' { #governance }
+  idp.starCatalog.technologyAsset -[governs]-> idp.starGRC.complianceRequirement 'requiresCompliance' { #governance }
+  idp.starCatalog.domain -[owns]-> idp.starOrganization.group 'ownedBy' { #ownership }
+  idp.starCatalog.domain -[governs]-> idp.starGRC.complianceRequirement 'requiresCompliance' { #governance }
+  idp.starCatalog.system -[owns]-> idp.starOrganization._team 'ownedBy' { #ownership }
+  idp.starCatalog.system -[owns]-> idp.starOrganization._team 'supportedBy' { #ownership }
+  idp.starCatalog.system -[governs]-> idp.starGRC.tier 'hasTier' { #governance }
+  idp.starCatalog.system -[governs]-> idp.starGRC.complianceRequirement 'requiresCompliance' { #governance }
+  idp.starCatalog.api -[owns]-> idp.starOrganization._team 'ownedBy' { #ownership }
+  
+  // Organization cross-star
+  idp.starOrganization._team -[dependsOn]-> idp.starMetrics.engineeringMetrics 'hasMetrics' { #metrics }
+  idp.starOrganization._team -[dependsOn]-> idp.starMetrics.copilotMetrics 'hasCopilot' { #metrics }
+  idp.starOrganization._user -[authenticates]-> idp.starSecurity.identity 'authenticatesVia' { #security }
+  
+  // Version Control cross-star
+  idp.starVCS.repository -[owns]-> idp.starOrganization.githubOrganization 'belongsTo' { #ownership }
+  idp.starVCS.repository -[triggers]-> idp.starCICD.ciPipeline 'hasPipeline'
+  idp.starVCS.repository -[produces]-> idp.starArtifacts.artifact 'produces'
+  idp.starVCS.repository -[dependsOn]-> idp.starSecurity.securityScorecard 'hasScorecard' { #security }
+  idp.starVCS.repository -[dependsOn]-> idp.starSecurity.securityAlert 'hasAlert' { #security }
+  idp.starVCS.repository -[dependsOn]-> idp.starQuality.codeQuality 'hasQuality'
+  idp.starVCS.repository -[dependsOn]-> idp.starMetrics.engineeringMetrics 'hasMetrics' { #metrics }
+  idp.starVCS.repository -[dependsOn]-> idp.starTemplates.template 'createdFrom' { #selfservice }
+  
+  // CI/CD cross-star
+  idp.starCICD.ciPipeline -[dependsOn]-> idp.starVCS.repository 'fromRepo'
+  idp.starCICD.deployment -[deploys]-> idp.starArtifacts.artifact 'deploysArtifact'
+  idp.starCICD.deployment -[deploys]-> idp.starArtifacts.containerImage 'deploysImage'
+  idp.starCICD.environment -[dependsOn]-> idp.starSecurity.secretVault 'hasVault'
+  idp.starCICD.environment -[dependsOn]-> idp.starFeatures.featureFlag 'hasFlags'
+  idp.starCICD.environment -[dependsOn]-> idp.starDatabase.databaseSchema 'hasSchema'
+  idp.starCICD.environment -[dependsOn]-> idp.starResource.resource 'usesResource'
+  
+  // Engineering Metrics cross-star
+  idp.starMetrics.engineeringMetrics -[dependsOn]-> idp.starVCS.repository 'measuresRepo'
+  idp.starMetrics.copilotMetrics -[dependsOn]-> idp.starOrganization._team 'measuresTeam'
+  
+  // Resource Catalog cross-star
+  idp.starResource.resource -[owns]-> idp.starOrganization._team 'ownedBy' { #ownership }
+  
+  // Software Templates cross-star
+  idp.starTemplates.template -[owns]-> idp.starOrganization._team 'ownedBy' { #ownership }
+  idp.starTemplates.scaffoldedEntity -[produces]-> idp.starVCS.repository 'createsRepo'
+  idp.starTemplates.scaffoldedEntity -[produces]-> idp.starCatalog.technologyAsset 'registersAsset'
+  
+  // GRC cross-star
+  idp.starGRC.policy -[governs]-> idp.starCatalog.technologyAsset 'governsAsset' { #governance }
+  idp.starGRC.policy -[owns]-> idp.starOrganization.group 'ownedBy' { #ownership }
+  idp.starGRC.auditRecord -[owns]-> idp.starOrganization._team 'createdBy' { #ownership }
 
 }

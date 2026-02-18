@@ -1,0 +1,56 @@
+// ============================================================================
+// C3 - FEATURE MANAGEMENT
+// ============================================================================
+// Blueprints: featureFlag, flagStrategy
+// ============================================================================
+
+views 'C3: Star Components' {
+
+  view starFeatures of idp.starFeatures {
+    title 'C3: Star Feature Management'
+    description 'Feature flags and progressive delivery blueprints'
+    
+    include
+      idp,
+      idp.starFeatures,
+      idp.starFeatures.*,
+      // Contexto: Stars que interagem
+      idp.starCatalog,
+      idp.starCICD,
+      // Integration Layer
+      idp.integrationLayer.intFeatureFlags,
+      unleash
+    
+    include
+      // Relação interna
+      idp.starFeatures.featureFlag -> idp.starFeatures.flagStrategy,
+      // Cross-star
+      idp.starCatalog -> idp.starFeatures.featureFlag,
+      idp.starCICD -> idp.starFeatures.featureFlag,
+      // Data source
+      idp.starFeatures.* -> idp.integrationLayer.intFeatureFlags,
+      idp.integrationLayer.intFeatureFlags -> unleash
+    
+    style idp.starFeatures.featureFlag {
+      notation "Feature Flag"
+      color green
+    }
+    style idp.starFeatures.flagStrategy {
+      notation "Rollout Strategy"
+      color amber
+    }
+    style idp.starCatalog {
+      notation "← Asset features"
+      color slate
+    }
+    style idp.starCICD {
+      notation "← Progressive deploy"
+      color slate
+    }
+    style idp.integrationLayer.intFeatureFlags {
+      notation "Unleash Integration"
+      color slate
+    }
+  }
+
+}

@@ -9,47 +9,22 @@ model {
       #github
       description 'CI/CD Pipeline (GitHub Actions)'
       icon bootstrap:gear-wide-connected
-      
-      // Cross-Star Relations
-      this -[dependsOn]-> idp.starVCS.repository 'fromRepo'
-      this -[dataSource]-> idp.integrationLayer.intGitHub { #dataFlow }
     }
     
     pipelineRun = blueprint 'pipelineRun' {
       description 'Individual pipeline execution'
       icon bootstrap:play-circle-fill
-      
-      this -[dataSource]-> idp.integrationLayer.intGitHub { #dataFlow }
     }
     
     deployment = blueprint 'deployment' {
       description 'Deployment to environment'
       icon bootstrap:rocket-takeoff-fill
-      
-      // Cross-Star Relations
-      this -[deploys]-> idp.starArtifacts.artifact 'deploysArtifact'
-      this -[deploys]-> idp.starArtifacts.containerImage 'deploysImage'
-      this -[dataSource]-> idp.integrationLayer.intGitHub { #dataFlow }
     }
     
     environment = blueprint 'environment' {
       description 'Execution environment (dev, staging, prod)'
       icon bootstrap:server
-      
-      // Cross-Star Relations (Hub de Runtime)
-      this -[dependsOn]-> idp.starSecurity.secretVault 'hasVault'
-      this -[dependsOn]-> idp.starFeatures.featureFlag 'hasFlags'
-      this -[dependsOn]-> idp.starDatabase.databaseSchema 'hasSchema'
-      this -[dependsOn]-> idp.starResource.resource 'usesResource'
-      this -[dataSource]-> idp.integrationLayer.intGitHub { #dataFlow }
     }
-    
-    // Internal Relations (kinded)
-    ciPipeline -[triggers]-> pipelineRun 'executes'
-    ciPipeline -[triggers]-> deployment 'triggersDeploy'
-    pipelineRun -[produces]-> deployment 'producesDeploy'
-    deployment -[deploys]-> environment 'targetsEnv'
-    environment -[includes]-> deployment 'hasDeployment'
     
   }
 }

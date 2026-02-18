@@ -1,0 +1,70 @@
+// ============================================================================
+// C3 - ENGINEERING METRICS
+// ============================================================================
+// Blueprints: engineeringMetrics, copilotMetrics
+// ============================================================================
+
+views 'C3: Star Components' {
+
+  view starMetrics of idp.starMetrics {
+    title 'C3: Star Engineering Metrics'
+    description 'DORA and productivity metrics blueprints'
+    
+    include
+      idp,
+      idp.starMetrics,
+      idp.starMetrics.*,
+      // Contexto: Stars que fornecem dados
+      idp.starOrganization,
+      idp.starVCS,
+      idp.starCICD,
+      // Integration Layer
+      idp.integrationLayer.intMetrics,
+      idp.integrationLayer.intGitHub,
+      linearb,
+      github
+    
+    include
+      // Relações internas
+      idp.starMetrics.engineeringMetrics -> idp.starMetrics.copilotMetrics,
+      // Cross-star (fontes de métricas)
+      idp.starOrganization -> idp.starMetrics.engineeringMetrics,
+      idp.starVCS -> idp.starMetrics.engineeringMetrics,
+      idp.starCICD -> idp.starMetrics.engineeringMetrics,
+      // Data sources
+      idp.starMetrics.engineeringMetrics -> idp.integrationLayer.intMetrics,
+      idp.starMetrics.copilotMetrics -> idp.integrationLayer.intGitHub,
+      idp.integrationLayer.intMetrics -> linearb,
+      idp.integrationLayer.intGitHub -> github
+    
+    style idp.starMetrics.engineeringMetrics {
+      notation "DORA Metrics"
+      color indigo
+    }
+    style idp.starMetrics.copilotMetrics {
+      notation "AI Productivity"
+      color indigo
+    }
+    style idp.starOrganization {
+      notation "← Team metrics"
+      color slate
+    }
+    style idp.starVCS {
+      notation "← Code velocity"
+      color slate
+    }
+    style idp.starCICD {
+      notation "← Deploy frequency"
+      color slate
+    }
+    style idp.integrationLayer.intMetrics {
+      notation "LinearB"
+      color slate
+    }
+    style idp.integrationLayer.intGitHub {
+      notation "GitHub Copilot API"
+      color slate
+    }
+  }
+
+}

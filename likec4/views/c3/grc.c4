@@ -1,0 +1,87 @@
+// ============================================================================
+// C3 - GRC (GOVERNANCE, RISK & COMPLIANCE)
+// ============================================================================
+// Blueprints: tier, dataClassification, lifecycleState, policy,
+//             policyException, complianceRequirement, complianceEvidence,
+//             auditRecord
+// ============================================================================
+
+views 'C3: Star Components' {
+
+  view starGRC of idp.starGRC {
+    title 'C3: Star GRC'
+    description 'Governance, Risk & Compliance blueprints'
+    
+    include
+      idp,
+      idp.starGRC,
+      idp.starGRC.*,
+      // Contexto: Stars que interagem
+      idp.starCatalog,
+      idp.starOrganization,
+      // Integration Layer
+      idp.integrationLayer.intPortal
+    
+    include
+      // Relações internas GRC
+      idp.starGRC.policy -> idp.starGRC.policyException,
+      idp.starGRC.complianceRequirement -> idp.starGRC.complianceEvidence,
+      idp.starGRC.complianceEvidence -> idp.starGRC.auditRecord,
+      idp.starGRC.policyException -> idp.starGRC.auditRecord,
+      // Cross-star
+      idp.starCatalog -> idp.starGRC.tier,
+      idp.starCatalog -> idp.starGRC.dataClassification,
+      idp.starCatalog -> idp.starGRC.lifecycleState,
+      idp.starCatalog -> idp.starGRC.complianceRequirement,
+      idp.starGRC.policy -> idp.starCatalog,
+      idp.starGRC.auditRecord -> idp.starOrganization,
+      // Data source
+      idp.starGRC.* -> idp.integrationLayer.intPortal
+    
+    style idp.starGRC.tier {
+      notation "Criticality Tier"
+      color amber
+    }
+    style idp.starGRC.dataClassification {
+      notation "Data Class"
+      color amber
+    }
+    style idp.starGRC.lifecycleState {
+      notation "Lifecycle"
+      color amber
+    }
+    style idp.starGRC.policy {
+      notation "Policy as Code"
+      color indigo
+    }
+    style idp.starGRC.complianceRequirement {
+      notation "PCI, SOX, GDPR, LGPD"
+      color indigo
+    }
+    style idp.starGRC.complianceEvidence {
+      notation "Audit Evidence"
+      color green
+    }
+    style idp.starGRC.auditRecord {
+      notation "Audit Trail"
+      color sky
+    }
+    style idp.starGRC.policyException {
+      notation "Approved Exception"
+      color red
+    }
+    style idp.starCatalog {
+      notation "← Governance applied"
+      color slate
+    }
+    style idp.starOrganization {
+      notation "← Ownership audit"
+      color slate
+    }
+    style idp.integrationLayer.intPortal {
+      notation "Port.io Native"
+      color slate
+    }
+  }
+
+}

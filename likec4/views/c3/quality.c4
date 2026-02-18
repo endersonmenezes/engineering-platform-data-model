@@ -1,0 +1,75 @@
+// ============================================================================
+// C3 - SOFTWARE QUALITY
+// ============================================================================
+// Blueprints: codeQuality, testCoverage, technicalDebt, report
+// ============================================================================
+
+views 'C3: Star Components' {
+
+  view starQuality of idp.starQuality {
+    title 'C3: Star Software Quality'
+    description 'Quality analysis, coverage and technical debt blueprints'
+    
+    include
+      idp,
+      idp.starQuality,
+      idp.starQuality.*,
+      // Contexto: Stars que interagem
+      idp.starVCS,
+      idp.starCatalog,
+      // Integration Layer
+      idp.integrationLayer.intQuality,
+      idp.integrationLayer.intPortal,
+      sonarqube
+    
+    include
+      // Relações internas
+      idp.starQuality.codeQuality -> idp.starQuality.testCoverage,
+      idp.starQuality.codeQuality -> idp.starQuality.technicalDebt,
+      idp.starQuality.report -> idp.starQuality.technicalDebt,
+      // Cross-star
+      idp.starVCS -> idp.starQuality.codeQuality,
+      idp.starCatalog -> idp.starQuality.codeQuality,
+      // Data sources
+      idp.starQuality.codeQuality -> idp.integrationLayer.intQuality,
+      idp.starQuality.testCoverage -> idp.integrationLayer.intQuality,
+      idp.starQuality.technicalDebt -> idp.integrationLayer.intQuality,
+      idp.starQuality.technicalDebt -> idp.integrationLayer.intPortal,
+      idp.starQuality.report -> idp.integrationLayer.intPortal,
+      idp.integrationLayer.intQuality -> sonarqube
+    
+    style idp.starQuality.codeQuality {
+      notation "Quality Gate"
+      color green
+    }
+    style idp.starQuality.testCoverage {
+      notation "Test Coverage"
+      color green
+    }
+    style idp.starQuality.technicalDebt {
+      notation "Technical Debt"
+      color amber
+    }
+    style idp.starQuality.report {
+      notation "Quality Report (Manual)"
+      color sky
+    }
+    style idp.starVCS {
+      notation "← Analyzes code"
+      color slate
+    }
+    style idp.starCatalog {
+      notation "← Asset quality"
+      color slate
+    }
+    style idp.integrationLayer.intQuality {
+      notation "SAST Scanner"
+      color slate
+    }
+    style idp.integrationLayer.intPortal {
+      notation "Portal (Manual Input)"
+      color slate
+    }
+  }
+
+}

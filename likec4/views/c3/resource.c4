@@ -1,0 +1,74 @@
+// ============================================================================
+// C3 - RESOURCE CATALOG
+// ============================================================================
+// Blueprints: resource, ociResource, azureResource
+// ============================================================================
+
+views 'C3: Star Components' {
+
+  view starResource of idp.starResource {
+    title 'C3: Star Resource Catalog'
+    description 'Multi-cloud infrastructure blueprints (OCI + Azure)'
+    
+    include
+      idp,
+      idp.starResource,
+      idp.starResource.*,
+      // Contexto: Stars que consomem recursos
+      idp.starCatalog,
+      idp.starCICD,
+      idp.starDatabase,
+      // Integration Layer
+      idp.integrationLayer.intCloud.*,
+      oci,
+      azure
+    
+    include
+      // Relações internas (herança)
+      idp.starResource.resource -> idp.starResource.ociResource,
+      idp.starResource.resource -> idp.starResource.azureResource,
+      // Cross-star
+      idp.starCatalog -> idp.starResource.resource,
+      idp.starCICD -> idp.starResource.resource,
+      idp.starDatabase -> idp.starResource.resource,
+      // Data sources
+      idp.starResource.ociResource -> idp.integrationLayer.intCloud.intOCI,
+      idp.starResource.azureResource -> idp.integrationLayer.intCloud.intAzure,
+      idp.integrationLayer.intCloud.intOCI -> oci,
+      idp.integrationLayer.intCloud.intAzure -> azure
+    
+    style idp.starResource.resource {
+      notation "Abstract Resource"
+      color amber
+    }
+    style idp.starResource.ociResource {
+      notation "Oracle Cloud Resource"
+      color red
+    }
+    style idp.starResource.azureResource {
+      notation "Azure Resource"
+      color blue
+    }
+    style idp.starCatalog {
+      notation "← Asset dependencies"
+      color slate
+    }
+    style idp.starCICD {
+      notation "← Deploy targets"
+      color slate
+    }
+    style idp.starDatabase {
+      notation "← DB instances"
+      color slate
+    }
+    style idp.integrationLayer.intCloud.intOCI {
+      notation "OCI Provider"
+      color slate
+    }
+    style idp.integrationLayer.intCloud.intAzure {
+      notation "Azure Provider"
+      color slate
+    }
+  }
+
+}

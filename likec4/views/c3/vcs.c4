@@ -1,0 +1,80 @@
+// ============================================================================
+// C3 - VERSION CONTROL
+// ============================================================================
+// Blueprints: repository, branch, pullRequest
+// ============================================================================
+
+views 'C3: Star Components' {
+
+  view starVCS of idp.starVCS {
+    title 'C3: Star Version Control'
+    description 'Source code and collaboration blueprints (GitHub)'
+    
+    include
+      idp,
+      idp.starVCS,
+      idp.starVCS.*,
+      // Contexto: Stars que dependem do VCS
+      idp.starCatalog,
+      idp.starCICD,
+      idp.starArtifacts,
+      idp.starSecurity,
+      idp.starQuality,
+      // Integration Layer
+      idp.integrationLayer.intGitHub,
+      github
+    
+    include
+      // Relações internas VCS
+      idp.starVCS.repository -> idp.starVCS.branch,
+      idp.starVCS.repository -> idp.starVCS.pullRequest,
+      idp.starVCS.pullRequest -> idp.starVCS.branch,
+      // Cross-star (repo é fonte para outras Stars)
+      idp.starCatalog -> idp.starVCS.repository,
+      idp.starVCS.repository -> idp.starCICD,
+      idp.starVCS.repository -> idp.starArtifacts,
+      idp.starVCS.repository -> idp.starSecurity,
+      idp.starVCS.repository -> idp.starQuality,
+      // Data source
+      idp.starVCS.* -> idp.integrationLayer.intGitHub,
+      idp.integrationLayer.intGitHub -> github
+    
+    style idp.starVCS.repository {
+      notation "Core VCS Blueprint"
+      color amber
+    }
+    style idp.starVCS.pullRequest {
+      notation "Pull Request"
+      color green
+    }
+    style idp.starVCS.branch {
+      notation "Branch"
+      color sky
+    }
+    style idp.starCatalog {
+      notation "← Asset source"
+      color slate
+    }
+    style idp.starCICD {
+      notation "→ Triggers pipelines"
+      color slate
+    }
+    style idp.starArtifacts {
+      notation "→ Produces artifacts"
+      color slate
+    }
+    style idp.starSecurity {
+      notation "→ Scanned by"
+      color slate
+    }
+    style idp.starQuality {
+      notation "→ Analyzed by"
+      color slate
+    }
+    style idp.integrationLayer.intGitHub {
+      notation "GitHub Integration"
+      color slate
+    }
+  }
+
+}

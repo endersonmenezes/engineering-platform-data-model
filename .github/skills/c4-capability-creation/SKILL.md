@@ -26,7 +26,7 @@ The current model has **13 Capability Stars**:
 | 5 | Resource Catalog | `starResource` | `blueprints/resource.c4` |
 | 6 | Artifact Management | `starArtifacts` | `blueprints/artifacts.c4` |
 | 7 | Security | `starSecurity` | `blueprints/security.c4` |
-| 8 | Code Quality | `starQuality` | `blueprints/quality.c4` |
+| 8 | Software Quality | `starQuality` | `blueprints/quality.c4` |
 | 9 | Engineering Metrics | `starMetrics` | `blueprints/metrics.c4` |
 | 10 | Feature Management | `starFeatures` | `blueprints/features.c4` |
 | 11 | Software Templates | `starTemplates` | `blueprints/templates.c4` |
@@ -126,13 +126,19 @@ idp.integrationLayer.intObservability -[syncs]-> idp.starObservability.logPipeli
 
 The star should appear in the C2 capability overview. If the view uses `include *`, it will be auto-included.
 
-### Step 6: Add C3 component view in `views/components.c4`
+### Step 6: Create C3 component view file `views/c3/<star-name>.c4`
+
+Create a new file `likec4/views/c3/observability.c4`:
 
 ```c4
-view starObservabilityView of idp.starObservability {
-  title 'Observability Star'
-  description 'Blueprints: logPipeline, metric, trace, alert'
-  include *
+views {
+
+  view starObservabilityView of idp.starObservability {
+    title 'Observability Star'
+    description 'Blueprints: logPipeline, metric, trace, alert'
+    include *
+  }
+
 }
 ```
 
@@ -157,7 +163,7 @@ npm test
 - [ ] Integration → Blueprint syncs in `relations.c4`
 - [ ] Blueprint → Integration dataSource in blueprint file
 - [ ] C2 container view updated in `views/containers.c4`
-- [ ] C3 component view added in `views/components.c4`
+- [ ] C3 component view file created in `views/c3/<star-name>.c4`
 - [ ] `npm run validate` passes
 - [ ] `npm test` passes
 
@@ -165,7 +171,7 @@ npm test
 
 1. **Read** `likec4/model.c4`
 2. **Read** `likec4/relations.c4`
-3. **Read** `likec4/views/containers.c4` and `components.c4`
+3. **Read** `likec4/views/containers.c4` and `likec4/views/c3/` directory
 4. **Create** star in `model.c4`
 5. **Create** blueprint file in `likec4/blueprints/`
 6. **Add** relations in `relations.c4`

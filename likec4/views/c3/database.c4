@@ -1,0 +1,62 @@
+// ============================================================================
+// C3 - DATABASE MANAGEMENT
+// ============================================================================
+// Blueprints: databaseSchema, migration
+// ============================================================================
+
+views 'C3: Star Components' {
+
+  view starDatabase of idp.starDatabase {
+    title 'C3: Star Database Management'
+    description 'Database schemas and migrations blueprints'
+    
+    include
+      idp,
+      idp.starDatabase,
+      idp.starDatabase.*,
+      // Contexto: Stars que interagem
+      idp.starCatalog,
+      idp.starResource,
+      idp.starCICD,
+      // Integration Layer
+      idp.integrationLayer.intMigration,
+      liquibase
+    
+    include
+      // Relação interna
+      idp.starDatabase.databaseSchema -> idp.starDatabase.migration,
+      // Cross-star
+      idp.starCatalog -> idp.starDatabase.databaseSchema,
+      idp.starDatabase.databaseSchema -> idp.starResource,
+      idp.starCICD -> idp.starDatabase.migration,
+      // Data source
+      idp.starDatabase.* -> idp.integrationLayer.intMigration,
+      idp.integrationLayer.intMigration -> liquibase
+    
+    style idp.starDatabase.databaseSchema {
+      notation "Database Schema"
+      color indigo
+    }
+    style idp.starDatabase.migration {
+      notation "Liquibase Changeset"
+      color amber
+    }
+    style idp.starCatalog {
+      notation "← Asset database"
+      color slate
+    }
+    style idp.starResource {
+      notation "→ Runs on"
+      color slate
+    }
+    style idp.starCICD {
+      notation "← Migration runs"
+      color slate
+    }
+    style idp.integrationLayer.intMigration {
+      notation "Liquibase Integration"
+      color slate
+    }
+  }
+
+}

@@ -1,0 +1,62 @@
+// ============================================================================
+// C3 - ARTIFACT MANAGEMENT
+// ============================================================================
+// Blueprints: artifact, containerImage
+// ============================================================================
+
+views 'C3: Star Components' {
+
+  view starArtifacts of idp.starArtifacts {
+    title 'C3: Star Artifact Management'
+    description 'Packages and container images blueprints'
+    
+    include
+      idp,
+      idp.starArtifacts,
+      idp.starArtifacts.*,
+      // Contexto: Stars que interagem
+      idp.starVCS,
+      idp.starCICD,
+      idp.starCatalog,
+      // Integration Layer
+      idp.integrationLayer.intRegistry,
+      github
+    
+    include
+      // Relação interna
+      idp.starArtifacts.artifact -> idp.starArtifacts.containerImage,
+      // Cross-star
+      idp.starVCS -> idp.starArtifacts.artifact,
+      idp.starCICD -> idp.starArtifacts.artifact,
+      idp.starCatalog -> idp.starArtifacts.artifact,
+      // Data source
+      idp.starArtifacts.* -> idp.integrationLayer.intRegistry,
+      idp.integrationLayer.intRegistry -> github
+    
+    style idp.starArtifacts.artifact {
+      notation "Package/Artifact"
+      color indigo
+    }
+    style idp.starArtifacts.containerImage {
+      notation "Container Image"
+      color blue
+    }
+    style idp.starVCS {
+      notation "← Built from"
+      color slate
+    }
+    style idp.starCICD {
+      notation "← Produced by"
+      color slate
+    }
+    style idp.starCatalog {
+      notation "← Asset artifact"
+      color slate
+    }
+    style idp.integrationLayer.intRegistry {
+      notation "GitHub Packages"
+      color slate
+    }
+  }
+
+}

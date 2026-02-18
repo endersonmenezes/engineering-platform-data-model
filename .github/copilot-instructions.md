@@ -42,7 +42,22 @@ likec4/
 └── views/
     ├── landscape.c4              # C1 - System Context
     ├── containers.c4             # C2 - Container (Stars)
-    ├── components.c4             # C3 - Component (Blueprints inside Stars)
+    ├── components.c4             # C3 - (deprecated, split into c3/)
+    └── c3/                       # C3 - Component views (one file per star)
+        ├── catalog.c4
+        ├── organization.c4
+        ├── vcs.c4
+        ├── cicd.c4
+        ├── resource.c4
+        ├── artifacts.c4
+        ├── security.c4
+        ├── quality.c4
+        ├── features.c4
+        ├── database.c4
+        ├── metrics.c4
+        ├── grc.c4
+        ├── templates.c4
+        └── multicloud.c4
     └── journeys.c4               # Dynamic Views (persona workflows)
 ```
 
@@ -54,7 +69,7 @@ likec4/
 |-------|------|-------|----------|
 | **C1** | `landscape.c4` | IDP as black box + personas + external systems | Everyone |
 | **C2** | `containers.c4` | 13 Capability Stars (NOT individual blueprints) | Architects |
-| **C3** | `components.c4` | Blueprints inside each Star | Developers |
+| **C3** | `views/c3/<star>.c4` | Blueprints inside each Star (one file per star) | Developers |
 | **Dynamic** | `journeys.c4` | Persona workflow sequences | Everyone |
 
 ### The 13 Capability Stars
@@ -68,7 +83,7 @@ likec4/
 | Resource Catalog | `starResource` | resource, ociResource, azureResource |
 | Artifact Management | `starArtifacts` | artifact, containerImage |
 | Security | `starSecurity` | securityScorecard, securityAlert, secretVault, identity |
-| Code Quality | `starQuality` | codeQuality, testCoverage |
+| Software Quality | `starQuality` | codeQuality, testCoverage, technicalDebt, report |
 | Engineering Metrics | `starMetrics` | engineeringMetrics, copilotMetrics |
 | Feature Management | `starFeatures` | featureFlag, flagStrategy |
 | Software Templates | `starTemplates` | template, scaffoldedEntity |
@@ -129,27 +144,26 @@ Relationship tags: `#sync`, `#ownership`, `#dataFlow`, `#governance`
 
 ## Critical Architecture Rules
 
-1. **Blueprints extend their Star**: Blueprint files use `extend` to add children to capabilities defined in `model.c4`.
-2. **Relations go in the right file**:
-   - Internal blueprint relations → in the blueprint file itself
-   - Cross-star relations (actor→capability, integration→external, integration→blueprint) → in `relations.c4`
-3. **Bidirectional dataSource**: Every blueprint MUST have a `dataSource` relation to its integration AND the integration must `syncs` to it.
-4. **Views respect C4 levels**: C2 shows Stars (NOT blueprints), C3 shows blueprints inside ONE star.
-5. **navigateTo for journeys**: Actor→capability relations in `relations.c4` use `navigateTo` to link to dynamic views.
-6. **All elements need descriptions**: Every element must have `description`.
-7. **Namespacing**: Always use full paths like `idp.starVCS.repository` in relations.
+1. **Blueprints extend their Star**: Blueprint files use `extend` to add children to capabilities defined in `model.c4`. Blueprint files contain **only element definitions** — no relations.
+2. **All relations go in `relations.c4`**: Every relation (dataSource, syncs, internal, cross-star, actor→capability) is centralized in `relations.c4`, organized by section.
+3. **All relations MUST have labels**: Unnamed relations appear blank in the LikeC4 UI.
+4. **Bidirectional dataSource**: Every blueprint MUST have a `dataSource` relation to its integration AND the integration must `syncs` to it.
+5. **Views respect C4 levels**: C2 shows Stars (NOT blueprints), C3 shows blueprints inside ONE star.
+6. **navigateTo for journeys**: Actor→capability relations in `relations.c4` use `navigateTo` to link to dynamic views.
+7. **All elements need descriptions**: Every element must have `description`.
+8. **Namespacing**: Always use full paths like `idp.starVCS.repository` in relations.
 
 ## Common Tasks & Where to Edit
 
 | Task | File(s) to Edit |
 |------|----------------|
 | Add a new persona | `model.c4` (actor) + `relations.c4` (relations) + `journeys.c4` (views) |
-| Add a new capability star | `model.c4` (capability) + new `blueprints/xyz.c4` + `relations.c4` + `containers.c4` + `components.c4` |
+| Add a new capability star | `model.c4` (capability) + new `blueprints/xyz.c4` + `relations.c4` + `containers.c4` + new `views/c3/xyz.c4` |
 | Add a blueprint to existing star | `blueprints/<star>.c4` (extend) + `relations.c4` (dataSource + syncs) |
 | Add a new integration | `model.c4` (inside integrationLayer) + `relations.c4` (syncs to external + blueprints) |
 | Add a new external system | `model.c4` (externalSystem) + `relations.c4` (integration syncs) |
 | Add a dynamic journey | `journeys.c4` (dynamic view) + `relations.c4` (navigateTo on actor relation) |
-| Add a C3 component view | `components.c4` |
+| Add a C3 component view | `views/c3/<star>.c4` |
 | Add element kind or tag | `specification.c4` |
 
 ## Validation & Testing

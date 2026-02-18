@@ -1,0 +1,73 @@
+// ============================================================================
+// C3 - CI/CD PLATFORM
+// ============================================================================
+// Blueprints: ciPipeline, pipelineRun, deployment, environment
+// ============================================================================
+
+views 'C3: Star Components' {
+
+  view starCICD of idp.starCICD {
+    title 'C3: Star CI-CD Platform'
+    description 'Build, test and deploy automation blueprints'
+    
+    include
+      idp,
+      idp.starCICD,
+      idp.starCICD.*,
+      // Contexto: Stars que interagem
+      idp.starVCS,
+      idp.starArtifacts,
+      idp.starResource,
+      // Integration Layer
+      idp.integrationLayer.intGitHub,
+      github
+    
+    include
+      // Pipeline flow interno
+      idp.starCICD.ciPipeline -> idp.starCICD.pipelineRun,
+      idp.starCICD.pipelineRun -> idp.starCICD.deployment,
+      idp.starCICD.deployment -> idp.starCICD.environment,
+      // Cross-star
+      idp.starVCS -> idp.starCICD.ciPipeline,
+      idp.starCICD.pipelineRun -> idp.starArtifacts,
+      idp.starCICD.deployment -> idp.starArtifacts,
+      idp.starCICD.deployment -> idp.starResource,
+      // Data source
+      idp.starCICD.* -> idp.integrationLayer.intGitHub,
+      idp.integrationLayer.intGitHub -> github
+    
+    style idp.starCICD.ciPipeline {
+      notation "Pipeline Definition"
+      color indigo
+    }
+    style idp.starCICD.pipelineRun {
+      notation "Pipeline Execution"
+      color amber
+    }
+    style idp.starCICD.deployment {
+      notation "Deployment Job"
+      color green
+    }
+    style idp.starCICD.environment {
+      notation "Target Environment"
+      color sky
+    }
+    style idp.starVCS {
+      notation "← Triggered by code"
+      color slate
+    }
+    style idp.starArtifacts {
+      notation "→ Produces/Deploys"
+      color slate
+    }
+    style idp.starResource {
+      notation "→ Deploys to"
+      color slate
+    }
+    style idp.integrationLayer.intGitHub {
+      notation "GitHub Actions"
+      color slate
+    }
+  }
+
+}

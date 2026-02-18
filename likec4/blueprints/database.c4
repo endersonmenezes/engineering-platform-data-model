@@ -8,19 +8,12 @@ model {
     databaseSchema = blueprint 'databaseSchema' {
       description 'Database schema'
       icon bootstrap:database-fill
-      
-      this -[dataSource]-> idp.integrationLayer.intMigration { #dataFlow }
     }
     
     migration = blueprint 'migration' {
       description 'Liquibase migration (changeset)'
       icon bootstrap:arrow-repeat
-      
-      this -[dataSource]-> idp.integrationLayer.intMigration { #dataFlow }
     }
-    
-    // Internal Relations (kinded)
-    databaseSchema -[includes]-> migration 'hasMigration'
     
   }
 }

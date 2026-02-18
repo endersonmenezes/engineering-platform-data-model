@@ -1,107 +1,49 @@
 // ============================================================================
 // BLUEPRINTS: GRC (Governance, Risk & Compliance)
 // ============================================================================
-// Separate from Security (technical) to focus on strategic governance:
-// - Ownership and responsibilities
-// - Compliance and regulatory requirements
-// - Classification and criticality
-// - Policies as code
-// ============================================================================
 
 model {
   extend idp.starGRC {
     
-    // -------------------------------------------------------------------------
-    // OWNERSHIP & ACCOUNTABILITY
-    // -------------------------------------------------------------------------
-    
     tier = blueprint 'tier' {
       description 'Asset criticality classification (tier1-critical, tier2, tier3)'
       icon bootstrap:award-fill
-      
-      this -[dataSource]-> idp.integrationLayer.intPortal { #dataFlow }
     }
     
     dataClassification = blueprint 'dataClassification' {
       description 'Data classification: public, internal, confidential, restricted'
       icon bootstrap:lock-fill
-      
-      this -[dataSource]-> idp.integrationLayer.intPortal { #dataFlow }
     }
     
     lifecycleState = blueprint 'lifecycleState' {
       description 'Lifecycle state: experimental, active, deprecated, retired'
       icon bootstrap:hourglass-split
-      
-      this -[dataSource]-> idp.integrationLayer.intPortal { #dataFlow }
     }
-    
-    // -------------------------------------------------------------------------
-    // COMPLIANCE & REGULATIONS
-    // -------------------------------------------------------------------------
     
     complianceRequirement = blueprint 'complianceRequirement' {
       description 'Compliance requirement: PCI-DSS, SOX, GDPR, LGPD, Basel'
       icon bootstrap:patch-check-fill
-      
-      this -[dataSource]-> idp.integrationLayer.intPortal { #dataFlow }
     }
     
     complianceEvidence = blueprint 'complianceEvidence' {
       description 'Compliance evidence for audit'
       icon bootstrap:file-earmark-check-fill
-      
-      this -[dataSource]-> idp.integrationLayer.intPortal { #dataFlow }
     }
-    
-    // -------------------------------------------------------------------------
-    // POLICIES & GOVERNANCE
-    // -------------------------------------------------------------------------
     
     policy = blueprint 'policy' {
       description 'Policy as code (OPA, Sentinel, Kyverno)'
       icon bootstrap:journal-bookmark-fill
-      
-      // Cross-Star Relations
-      this -[governs]-> idp.starCatalog.technologyAsset 'governsAsset' { #governance }
-      this -[owns]-> idp.starOrganization.group 'ownedBy' { #ownership }
-      this -[dataSource]-> idp.integrationLayer.intPortal { #dataFlow }
     }
     
     policyException = blueprint 'policyException' {
       description 'Approved policy exception'
       icon bootstrap:shield-slash-fill
-      
-      this -[dataSource]-> idp.integrationLayer.intPortal { #dataFlow }
     }
-    
-    // -------------------------------------------------------------------------
-    // AUDIT & RECORDS
-    // -------------------------------------------------------------------------
     
     auditRecord = blueprint 'auditRecord' {
       description 'Audit record of ownership and changes'
       icon bootstrap:journal-text
-      
-      // Cross-Star Relations
-      this -[owns]-> idp.starOrganization._team 'createdBy' { #ownership }
-      this -[dataSource]-> idp.integrationLayer.intPortal { #dataFlow }
     }
-    
-    // -------------------------------------------------------------------------
-    // INTERNAL RELATIONS (kinded)
-    // -------------------------------------------------------------------------
-    
-    // Compliance relationships
-    complianceRequirement -[includes]-> complianceEvidence 'requiresEvidence'
-    complianceEvidence -[produces]-> auditRecord 'generates'
-    
-    // Policy relationships
-    policy -[includes]-> policyException 'hasException'
-    policyException -[produces]-> auditRecord 'loggedIn'
-    
-    // Lifecycle affects compliance
-    lifecycleState -[governs]-> complianceRequirement 'affectedBy' { #governance }
     
   }
 }

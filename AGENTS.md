@@ -31,7 +31,7 @@ Views are organized by C4 level:
 |-------|---------|------|-------|
 | **C1** | `index` | `views/landscape.c4` | IDP + actors + external systems |
 | **C2** | `capabilities` | `views/containers.c4` | 13 Capability Stars |
-| **C3** | `starCatalog`, `starVCS`, etc. | `views/components.c4` | Blueprints inside each star |
+| **C3** | `starCatalog`, `starVCS`, etc. | `views/c3/<star>.c4` | Blueprints inside each star (one file per star) |
 | **Dynamic** | `developerOnboarding`, etc. | `views/journeys.c4` | Persona workflow sequences |
 
 ### C3 Component Views
@@ -46,7 +46,7 @@ Views are organized by C4 level:
 | `starMetrics` | Engineering Metrics | engineeringMetrics, copilotMetrics |
 | `starResource` | Resource Catalog | resource, ociResource, azureResource |
 | `starTemplates` | Software Templates | template, scaffoldedEntity |
-| `starQuality` | Code Quality | codeQuality, testCoverage |
+| `starQuality` | Software Quality | codeQuality, testCoverage, technicalDebt, report |
 | `starArtifacts` | Artifact Management | artifact, containerImage |
 | `starGRC` | GRC | tier, policy, complianceRequirement |
 | `starFeatures` | Feature Management | featureFlag, flagStrategy |
@@ -118,7 +118,7 @@ npm run export     # Export diagrams as images
 | Task | Files to Change |
 |------|----------------|
 | Add a blueprint | `blueprints/<star>.c4` + `relations.c4` |
-| Add a capability star | `model.c4` + new `blueprints/<name>.c4` + `relations.c4` + `views/containers.c4` + `views/components.c4` |
+| Add a capability star | `model.c4` + new `blueprints/<name>.c4` + `relations.c4` + `views/containers.c4` + new `views/c3/<name>.c4` |
 | Add a persona | `model.c4` + `relations.c4` + `views/journeys.c4` |
 | Add integration | `model.c4` + `relations.c4` + blueprint files |
 | Add journey | `views/journeys.c4` + `relations.c4` (navigateTo) |

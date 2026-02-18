@@ -1,0 +1,44 @@
+// ============================================================================
+// C3 - MULTI-CLOUD DETAIL
+// ============================================================================
+// Focus on OCI + Azure infrastructure resources
+// ============================================================================
+
+views 'C3: Star Components' {
+
+  view multicloud of idp.starResource {
+    title 'C3: Multi-Cloud Detail'
+    description 'Infrastructure resources in OCI + Azure'
+    
+    include
+      idp,
+      idp.starResource,
+      idp.starResource.*,
+      idp.integrationLayer.intCloud,
+      idp.integrationLayer.intCloud.*,
+      oci,
+      azure
+    
+    include
+      idp.starResource.resource -> idp.starResource.ociResource,
+      idp.starResource.resource -> idp.starResource.azureResource,
+      idp.starResource.ociResource -> idp.integrationLayer.intCloud.intOCI,
+      idp.starResource.azureResource -> idp.integrationLayer.intCloud.intAzure,
+      idp.integrationLayer.intCloud.intOCI -> oci,
+      idp.integrationLayer.intCloud.intAzure -> azure
+    
+    style idp.starResource.ociResource {
+      notation "OCI Resource"
+      color red
+    }
+    style idp.starResource.azureResource {
+      notation "Azure Resource"
+      color blue
+    }
+    style idp.starResource.resource {
+      notation "Abstract Resource"
+      color amber
+    }
+  }
+
+}

@@ -1,5 +1,5 @@
 // ============================================================================
-// BLUEPRINTS: Code Quality
+// BLUEPRINTS: Software Quality
 // ============================================================================
 
 model {
@@ -8,19 +8,22 @@ model {
     codeQuality = blueprint 'codeQuality' {
       description 'Quality metrics: bugs, debt, smells'
       icon tech:sonarqube
-      
-      this -[dataSource]-> idp.integrationLayer.intQuality { #dataFlow }
     }
     
     testCoverage = blueprint 'testCoverage' {
       description 'Test coverage (unit, integration)'
       icon bootstrap:check2-all
-      
-      this -[dataSource]-> idp.integrationLayer.intQuality { #dataFlow }
     }
     
-    // Internal Relations (kinded)
-    codeQuality -[includes]-> testCoverage 'hasCoverage'
+    technicalDebt = blueprint 'technicalDebt' {
+      description 'Tracked technical debt item originated from code analysis or manual reports'
+      icon bootstrap:exclamation-triangle-fill
+    }
+    
+    report = blueprint 'report' {
+      description 'Quality assessment report for manual registration of findings and technical debt'
+      icon bootstrap:file-earmark-text-fill
+    }
     
   }
 }

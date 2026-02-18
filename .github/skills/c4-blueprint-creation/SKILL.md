@@ -27,7 +27,7 @@ Blueprints are defined in `likec4/blueprints/<star-name>.c4` and use `extend` to
 | Resource Catalog | `blueprints/resource.c4` | resource, ociResource, azureResource |
 | Artifact Management | `blueprints/artifacts.c4` | artifact, containerImage |
 | Security | `blueprints/security.c4` | securityScorecard, securityAlert, secretVault, identity |
-| Code Quality | `blueprints/quality.c4` | codeQuality, testCoverage |
+| Software Quality | `blueprints/quality.c4` | codeQuality, testCoverage, technicalDebt, report |
 | Engineering Metrics | `blueprints/metrics.c4` | engineeringMetrics, copilotMetrics |
 | Feature Management | `blueprints/features.c4` | featureFlag, flagStrategy |
 | Software Templates | `blueprints/templates.c4` | template, scaffoldedEntity |
@@ -35,6 +35,8 @@ Blueprints are defined in `likec4/blueprints/<star-name>.c4` and use `extend` to
 | Database Management | `blueprints/database.c4` | databaseSchema, migration |
 
 ## Blueprint Structure
+
+Blueprint files contain **only element definitions** — no relations. All relations (dataSource, internal, cross-star) go in `likec4/relations.c4`.
 
 ### Basic Blueprint
 
@@ -49,26 +51,6 @@ extend idp.starVCS {
       color green
     }
   }
-
-}
-```
-
-### Blueprint with Internal Relations
-
-```c4
-extend idp.starCICD {
-
-  newBlueprint = blueprint 'New Blueprint' {
-    description 'Description of the new blueprint'
-    icon tech:docker
-    technology 'REST API'
-    style {
-      color green
-    }
-  }
-
-  // Internal relations (within same star)
-  newBlueprint -[dependsOn]-> ciPipeline 'depends on pipeline'
 
 }
 ```
@@ -92,39 +74,47 @@ Every blueprint MUST have:
 
 ## After Creating a Blueprint
 
-After creating a new blueprint, you MUST also:
+After creating a new blueprint, you MUST also add relations in `likec4/relations.c4`:
 
-### 1. Add dataSource relation (in the blueprint file)
+### 1. Add dataSource relation
+
+Every `dataSource` relation **MUST have a label** — relations without labels appear blank in the LikeC4 UI.
 
 ```c4
-myNewBlueprint -[dataSource]-> idp.integrationLayer.intGitHub 'synced from GitHub' {
-  #sync
-}
+// In relations.c4 — BLUEPRINTS -> INTEGRATIONS section
+idp.starVCS.myNewBlueprint -[dataSource]-> idp.integrationLayer.intGitHub 'synced from GitHub' { #dataFlow #sync }
 ```
 
-### 2. Add syncs relation from integration (in relations.c4)
+### 2. Add syncs relation from integration
 
 ```c4
-idp.integrationLayer.intGitHub -[syncs]-> idp.starVCS.myNewBlueprint 'syncs blueprint data' {
-  #sync
-}
+// In relations.c4 — INTEGRATIONS -> BLUEPRINTS section
+idp.integrationLayer.intGitHub -[syncs]-> idp.starVCS.myNewBlueprint 'syncs blueprint data' { #sync #dataFlow }
 ```
 
-### 3. Add to C3 component view (in views/components.c4)
-
-If the star already has a C3 view, the blueprint may be auto-included. Otherwise, explicitly include it.
-
-### 4. Add cross-star relations if needed (in relations.c4)
+### 3. Add internal star relations if needed
 
 ```c4
+// In relations.c4 — INTERNAL STAR RELATIONS section
+idp.starVCS.myNewBlueprint -[dependsOn]-> idp.starVCS.repository 'belongs to repo'
+```
+
+### 4. Add cross-star relations if needed
+
+```c4
+// In relations.c4 — CROSS-STAR RELATIONS section
 idp.starVCS.myNewBlueprint -[dependsOn]-> idp.starCatalog.technologyAsset 'linked to asset'
 ```
+
+### 5. Add to C3 component view (in views/c3/<star>.c4)
+
+If the star already has a C3 view file in `views/c3/`, the blueprint may be auto-included. Otherwise, explicitly include it in the star's dedicated C3 file.
 
 ## Complete Example: Adding a Blueprint
 
 **Scenario**: Add `gitTag` blueprint to the Version Control star.
 
-### Step 1: Edit `blueprints/vcs.c4`
+### Step 1: Edit `blueprints/vcs.c4` (element only)
 
 ```c4
 extend idp.starVCS {
@@ -133,25 +123,22 @@ extend idp.starVCS {
     description 'Represents a tagged version or release point in a Git repository'
     icon tech:git
     technology 'Git'
-    style {
-      color green
-    }
-  }
-
-  gitTag -[dependsOn]-> repository 'belongs to repository'
-  gitTag -[dataSource]-> idp.integrationLayer.intGitHub 'synced from GitHub' {
-    #sync
   }
 
 }
 ```
 
-### Step 2: Edit `relations.c4`
+### Step 2: Edit `relations.c4` (all relations)
 
 ```c4
-idp.integrationLayer.intGitHub -[syncs]-> idp.starVCS.gitTag 'syncs tag data' {
-  #sync
-}
+// BLUEPRINTS -> INTEGRATIONS section
+idp.starVCS.gitTag -[dataSource]-> idp.integrationLayer.intGitHub 'synced from GitHub' { #dataFlow #sync }
+
+// INTEGRATIONS -> BLUEPRINTS section
+idp.integrationLayer.intGitHub -[syncs]-> idp.starVCS.gitTag 'syncs tag data' { #sync #dataFlow }
+
+// INTERNAL STAR RELATIONS section
+idp.starVCS.gitTag -[dependsOn]-> idp.starVCS.repository 'belongs to repository'
 ```
 
 ### Step 3: Validate
@@ -178,15 +165,16 @@ npm test
 1. Blueprint ID must be unique across the entire model
 2. Blueprint must be inside an `extend idp.star*` block
 3. Must have a `description` property
-4. Must have a `dataSource` relation to an integration
-5. The integration must have a corresponding `syncs` back to the blueprint
-6. All cross-star relations must use full paths (e.g., `idp.starVCS.repository`)
+4. Must have a `dataSource` relation in `relations.c4`
+5. The integration must have a corresponding `syncs` back to the blueprint in `relations.c4`
+6. **No relations in blueprint files** — all relations go in `relations.c4`
+7. All relations must use full paths (e.g., `idp.starVCS.repository`)
+8. All relations must have a label
 
 ## Workflow
 
 1. **Read** the target blueprint file (`likec4/blueprints/<star>.c4`)
 2. **Read** `likec4/relations.c4`
-3. **Create** the blueprint in the extend block
-4. **Add** `dataSource` relation in the blueprint file
-5. **Add** `syncs` relation in `relations.c4`
-6. **Validate** with `npm run validate`
+3. **Create** the blueprint in the extend block (element definition only)
+4. **Add** all relations in `relations.c4` (dataSource, syncs, internal, cross-star)
+5. **Validate** with `npm run validate`

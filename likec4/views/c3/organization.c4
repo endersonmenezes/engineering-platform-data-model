@@ -1,0 +1,76 @@
+// ============================================================================
+// C3 - ORGANIZATIONAL SEMANTIC
+// ============================================================================
+// Blueprints: _team, _user, group, githubUser, githubOrganization
+// ============================================================================
+
+views 'C3: Star Components' {
+
+  view starOrganization of idp.starOrganization {
+    title 'C3: Star Organizational Semantic'
+    description 'Organizational structure and ownership blueprints'
+    
+    include
+      idp,
+      idp.starOrganization,
+      idp.starOrganization.*,
+      // Contexto: Stars que interagem (recebem ownership)
+      idp.starCatalog,
+      // Integration Layer
+      idp.integrationLayer.intPortal,
+      idp.integrationLayer.intGitHub,
+      github
+    
+    include
+      // Hierarquia organizacional
+      idp.starOrganization.group -> idp.starOrganization._team,
+      idp.starOrganization._team -> idp.starOrganization._user,
+      // GitHub identity mapping
+      idp.starOrganization._user -> idp.starOrganization.githubUser,
+      idp.starOrganization._team -> idp.starOrganization.githubOrganization,
+      // Ownership do catálogo (team/group -> catalog entities)
+      idp.starOrganization._team -> idp.starCatalog,
+      idp.starOrganization.group -> idp.starCatalog,
+      // Data sources
+      idp.starOrganization._team -> idp.integrationLayer.intPortal,
+      idp.starOrganization._user -> idp.integrationLayer.intPortal,
+      idp.starOrganization.group -> idp.integrationLayer.intPortal,
+      idp.starOrganization.githubUser -> idp.integrationLayer.intGitHub,
+      idp.starOrganization.githubOrganization -> idp.integrationLayer.intGitHub,
+      idp.integrationLayer.intGitHub -> github
+    
+    style idp.starOrganization.group {
+      notation "Tribe/Área"
+      color indigo
+    }
+    style idp.starOrganization._team {
+      notation "Squad/Chapter"
+      color amber
+    }
+    style idp.starOrganization._user {
+      notation "Portal User"
+      color green
+    }
+    style idp.starOrganization.githubUser {
+      notation "GitHub Identity"
+      color sky
+    }
+    style idp.starOrganization.githubOrganization {
+      notation "GitHub Org"
+      color sky
+    }
+    style idp.starCatalog {
+      notation "← Owns entities"
+      color slate
+    }
+    style idp.integrationLayer.intPortal {
+      notation "Port.io Native"
+      color slate
+    }
+    style idp.integrationLayer.intGitHub {
+      notation "GitHub Sync"
+      color slate
+    }
+  }
+
+}

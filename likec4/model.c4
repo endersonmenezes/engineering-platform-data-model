@@ -138,8 +138,8 @@ model {
       icon bootstrap:shield-lock-fill
     }
     
-    starQuality = capability 'Code Quality' {
-      description 'Quality metrics and coverage'
+    starQuality = capability 'Software Quality' {
+      description 'Quality metrics, coverage and technical debt'
       icon bootstrap:check2-circle
     }
     

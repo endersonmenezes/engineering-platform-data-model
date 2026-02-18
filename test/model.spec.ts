@@ -58,10 +58,35 @@ describe('LikeC4 Model Validation', () => {
       }).not.toThrow();
     });
 
-    it('should have components view', () => {
+    it('should have c3 component views directory', () => {
       expect(() => {
-        execSync('test -f likec4/views/components.c4', { stdio: 'pipe' });
+        execSync('test -d likec4/views/c3', { stdio: 'pipe' });
       }).not.toThrow();
+    });
+
+    const c3ViewFiles = [
+      'catalog.c4',
+      'organization.c4',
+      'vcs.c4',
+      'cicd.c4',
+      'resource.c4',
+      'artifacts.c4',
+      'security.c4',
+      'quality.c4',
+      'metrics.c4',
+      'features.c4',
+      'templates.c4',
+      'grc.c4',
+      'database.c4',
+      'multicloud.c4'
+    ];
+
+    c3ViewFiles.forEach(file => {
+      it(`should have c3/${file}`, () => {
+        expect(() => {
+          execSync(`test -f likec4/views/c3/${file}`, { stdio: 'pipe' });
+        }).not.toThrow();
+      });
     });
 
     it('should have journeys view', () => {

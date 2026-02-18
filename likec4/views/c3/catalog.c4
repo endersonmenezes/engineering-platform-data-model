@@ -1,0 +1,77 @@
+// ============================================================================
+// C3 - SERVICE CATALOG
+// ============================================================================
+// Blueprints: technologyAsset, domain, system, api
+// ============================================================================
+
+views 'C3: Star Components' {
+
+  view starCatalog of idp.starCatalog {
+    title 'C3: Star Service Catalog'
+    description 'Technology asset catalog blueprints'
+    
+    include
+      idp,
+      idp.starCatalog,
+      idp.starCatalog.*,
+      // Contexto: Stars que interagem
+      idp.starOrganization,
+      idp.starVCS,
+      idp.starResource,
+      idp.starTemplates,
+      // Integration Layer
+      idp.integrationLayer.intPortal
+    
+    include
+      // Relações internas do Catalog
+      idp.starCatalog.domain -> idp.starCatalog.system,
+      idp.starCatalog.system -> idp.starCatalog.technologyAsset,
+      idp.starCatalog.technologyAsset -> idp.starCatalog.api,
+      // Cross-star (ownership e dependências)
+      idp.starCatalog.technologyAsset -> idp.starOrganization,
+      idp.starCatalog.technologyAsset -> idp.starVCS,
+      idp.starCatalog.technologyAsset -> idp.starResource,
+      idp.starCatalog.domain -> idp.starOrganization,
+      idp.starTemplates -> idp.starCatalog.technologyAsset,
+      // Data source
+      idp.starCatalog.* -> idp.integrationLayer.intPortal
+    
+    style idp.starCatalog.technologyAsset {
+      notation "Core Blueprint (Component)"
+      color amber
+    }
+    style idp.starCatalog.domain {
+      notation "Business Domain"
+      color indigo
+    }
+    style idp.starCatalog.system {
+      notation "Product System"
+      color green
+    }
+    style idp.starCatalog.api {
+      notation "Exposed API"
+      color sky
+    }
+    style idp.starOrganization {
+      notation "→ Ownership"
+      color slate
+    }
+    style idp.starVCS {
+      notation "→ Source Code"
+      color slate
+    }
+    style idp.starResource {
+      notation "→ Infrastructure"
+      color slate
+    }
+    style idp.starTemplates {
+      notation "← Self-Service"
+      color slate
+    }
+    style idp.integrationLayer.intPortal {
+      notation "Port.io Native"
+      color slate
+    }
+  }
+
+}

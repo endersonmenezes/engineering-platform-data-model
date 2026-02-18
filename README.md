@@ -27,7 +27,7 @@ The model draws from two key references: [Backstage](https://backstage.io/) for 
 | **Resource Catalog** | `resource`, `ociResource`, `azureResource` | Multi-cloud infrastructure |
 | **Artifact Management** | `artifact`, `containerImage` | Artifacts and images |
 | **Security** | `securityScorecard`, `securityAlert`, `secretVault` | Technical security |
-| **Code Quality** | `codeQuality`, `testCoverage` | Quality metrics |
+| **Software Quality** | `codeQuality`, `testCoverage`, `technicalDebt`, `report` | Quality metrics and technical debt |
 | **Engineering Metrics** | `engineeringMetrics`, `copilotMetrics` | DORA and productivity |
 | **Feature Management** | `featureFlag`, `flagStrategy` | Feature flags |
 | **Software Templates** | `template`, `scaffoldedEntity` | Self-service |

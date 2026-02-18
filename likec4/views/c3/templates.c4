@@ -1,0 +1,60 @@
+// ============================================================================
+// C3 - SOFTWARE TEMPLATES
+// ============================================================================
+// Blueprints: template, scaffoldedEntity
+// ============================================================================
+
+views 'C3: Star Components' {
+
+  view starTemplates of idp.starTemplates {
+    title 'C3: Star Software Templates'
+    description 'Self-service scaffolding blueprints'
+    
+    include
+      idp,
+      idp.starTemplates,
+      idp.starTemplates.*,
+      // Contexto: Stars que interagem
+      idp.starOrganization,
+      idp.starCatalog,
+      idp.starVCS,
+      // Integration Layer
+      idp.integrationLayer.intPortal
+    
+    include
+      // Relação interna
+      idp.starTemplates.template -> idp.starTemplates.scaffoldedEntity,
+      // Cross-star
+      idp.starOrganization -> idp.starTemplates.template,
+      idp.starTemplates.scaffoldedEntity -> idp.starCatalog,
+      idp.starTemplates.scaffoldedEntity -> idp.starVCS,
+      // Data source
+      idp.starTemplates.* -> idp.integrationLayer.intPortal
+    
+    style idp.starTemplates.template {
+      notation "Scaffolding Template"
+      color green
+    }
+    style idp.starTemplates.scaffoldedEntity {
+      notation "Generated Entity"
+      color amber
+    }
+    style idp.starOrganization {
+      notation "← Created by team"
+      color slate
+    }
+    style idp.starCatalog {
+      notation "→ Creates asset"
+      color slate
+    }
+    style idp.starVCS {
+      notation "→ Creates repo"
+      color slate
+    }
+    style idp.integrationLayer.intPortal {
+      notation "Port.io Self-Service"
+      color slate
+    }
+  }
+
+}

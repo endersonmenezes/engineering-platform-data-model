@@ -7,8 +7,9 @@ description: Guide for creating and editing LikeC4 relations (connections betwee
 
 ## Critical Requirements
 
-- ALWAYS read `likec4/relations.c4` and the relevant blueprint file before creating relations
-- Cross-star relations go in `relations.c4`, internal relations go in the blueprint file
+- ALWAYS read `likec4/relations.c4` before creating relations
+- **ALL relations go in `relations.c4`** — blueprint files contain only element definitions
+- **ALWAYS include a label (name) on every relation** — unnamed relations appear blank in the UI
 - ALWAYS validate with `npm run validate` after changes
 
 ## Relation Kinds
@@ -28,18 +29,18 @@ description: Guide for creating and editing LikeC4 relations (connections betwee
 
 ## Where Relations Go
 
-### In blueprint files (`blueprints/*.c4`)
+**ALL relations go in `likec4/relations.c4`**. Blueprint files (`blueprints/*.c4`) contain only element definitions.
 
-- Relations between blueprints **within the same star**
-- `dataSource` relations from blueprint to integration
+The relations.c4 file is organized into these sections:
 
-### In `relations.c4`
-
-- **Actor → Capability** relations (with `navigateTo`)
-- **Integration ↔ External System** syncs
-- **Integration → Blueprint** syncs
-- **Cross-star** blueprint relations
-- **Capability → Capability** dependencies
+| Section | Content |
+|---------|--------|
+| ACTOR -> IDP CAPABILITIES | Actor-to-star relations (with `navigateTo`) |
+| INTEGRATION LAYER -> EXTERNAL SYSTEMS | Integration-to-external syncs |
+| INTEGRATIONS -> BLUEPRINTS | `syncs` from integration to blueprint |
+| BLUEPRINTS -> INTEGRATIONS | `dataSource` from blueprint to integration |
+| INTERNAL STAR RELATIONS | Relations between blueprints within same star |
+| CROSS-STAR RELATIONS | Relations between blueprints across different stars |
 
 ## Full Path Requirements
 
@@ -70,14 +71,14 @@ Every blueprint MUST have a bidirectional data source connection:
 Blueprint ---[dataSource]---> Integration ---[syncs]---> External System
 ```
 
-In the blueprint file:
-```c4
-repository -[dataSource]-> idp.integrationLayer.intGitHub 'synced from GitHub' { #sync }
-```
+**Both directions MUST have labels. Both go in `relations.c4`:**
 
-In relations.c4:
 ```c4
-idp.integrationLayer.intGitHub -[syncs]-> idp.starVCS.repository 'syncs repo data' { #sync }
+// BLUEPRINTS -> INTEGRATIONS section
+idp.starVCS.repository -[dataSource]-> idp.integrationLayer.intGitHub 'synced from GitHub' { #dataFlow #sync }
+
+// INTEGRATIONS -> BLUEPRINTS section
+idp.integrationLayer.intGitHub -[syncs]-> idp.starVCS.repository 'syncs repo data' { #sync #dataFlow }
 ```
 
 ## Common Patterns

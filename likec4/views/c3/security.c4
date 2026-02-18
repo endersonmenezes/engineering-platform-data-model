@@ -1,0 +1,85 @@
+// ============================================================================
+// C3 - SECURITY
+// ============================================================================
+// Blueprints: securityScorecard, securityAlert, secretVault, identity
+// ============================================================================
+
+views 'C3: Star Components' {
+
+  view starSecurity of idp.starSecurity {
+    title 'C3: Star Security'
+    description 'Security posture and identity blueprints'
+    
+    include
+      idp,
+      idp.starSecurity,
+      idp.starSecurity.*,
+      // Contexto: Stars que interagem
+      idp.starVCS,
+      idp.starCatalog,
+      // Integration Layer
+      idp.integrationLayer.intSecurity,
+      idp.integrationLayer.intSecrets,
+      idp.integrationLayer.intIdentity,
+      github,
+      entraId,
+      azure,
+      oci
+    
+    include
+      // Relações internas Security
+      idp.starSecurity.securityScorecard -> idp.starSecurity.securityAlert,
+      idp.starSecurity.secretVault -> idp.starSecurity.identity,
+      // Cross-star
+      idp.starVCS -> idp.starSecurity.securityScorecard,
+      idp.starVCS -> idp.starSecurity.securityAlert,
+      idp.starCatalog -> idp.starSecurity.securityScorecard,
+      // Data sources
+      idp.starSecurity.securityScorecard -> idp.integrationLayer.intSecurity,
+      idp.starSecurity.securityAlert -> idp.integrationLayer.intSecurity,
+      idp.starSecurity.secretVault -> idp.integrationLayer.intSecrets,
+      idp.starSecurity.identity -> idp.integrationLayer.intIdentity,
+      idp.integrationLayer.intSecurity -> github,
+      idp.integrationLayer.intSecrets -> azure,
+      idp.integrationLayer.intSecrets -> oci,
+      idp.integrationLayer.intIdentity -> entraId
+    
+    style idp.starSecurity.securityScorecard {
+      notation "Security Posture"
+      color red
+    }
+    style idp.starSecurity.securityAlert {
+      notation "Vulnerability Alert"
+      color red
+    }
+    style idp.starSecurity.secretVault {
+      notation "Secret Vault"
+      color amber
+    }
+    style idp.starSecurity.identity {
+      notation "Managed Identity"
+      color blue
+    }
+    style idp.starVCS {
+      notation "← Scans code"
+      color slate
+    }
+    style idp.starCatalog {
+      notation "← Asset security"
+      color slate
+    }
+    style idp.integrationLayer.intSecurity {
+      notation "GHAS Scanner"
+      color slate
+    }
+    style idp.integrationLayer.intSecrets {
+      notation "Key Vault (Azure + OCI)"
+      color slate
+    }
+    style idp.integrationLayer.intIdentity {
+      notation "SSO Provider"
+      color slate
+    }
+  }
+
+}
