@@ -13,7 +13,7 @@ A **reference data model** for building Internal Developer Portals, organized in
 The model draws from two key references: [Backstage](https://backstage.io/) for the core entity architecture (Component, API, System, Domain, Resource, Group, User, Template) and [Port.io's Blueprint model](https://docs.port.io/build-your-software-catalog/customize-integrations/configure-data-model/setup-blueprint/) for the concept of *Blueprints* as configurable data entities. However, this data model is **tool-agnostic** — it can be implemented in Backstage, Port.io, Cortex, OpsLevel, or any IDP that supports a configurable data model.
 
 > [!IMPORTANT]
-> As the information that is here is going through a review, I am creating a forum with the title of "Data Engineering applied to Platform Engineering", please wait a few days. If you are impacted by removing the content, please contact us by email: _mail[at]enderson[dot]dev_
+> As the information that is here is going through a review, I am creating a [talk](https://github.com/endersonmenezes/talks] with the title of "Data Engineering applied to Platform Engineering", please wait a few days. If you are impacted by removing the content, please contact us by email: _mail[at]enderson[dot]dev_
 
 ## License
 
